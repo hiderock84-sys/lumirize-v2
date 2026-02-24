@@ -541,13 +541,11 @@ textarea {
 
 @media (max-width: 899px) {
   .cinematic__visual {
-    position: relative;
-    top: 0;
     min-height: 52vh;
   }
 
-  .cinematic__block {
-    min-height: auto;
+  .cinematic__block[data-scene] {
+    min-height: min(64vh, 520px);
   }
 }
 
