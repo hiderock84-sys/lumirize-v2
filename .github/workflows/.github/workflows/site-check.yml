@@ -25,3 +25,4 @@ jobs:
           grep -q 'id="story"' index.html
           grep -q 'cinematic__img' index.html
           grep -q 'cinematic__block' index.html
+
