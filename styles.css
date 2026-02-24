@@ -412,6 +412,14 @@ p {
   padding-bottom: 0;
 }
 
+.company-overview--contact {
+  margin: 0.7rem 0 1rem;
+}
+
+.company-overview--contact li {
+  font-size: 0.92rem;
+}
+
 .contact-grid {
   display: grid;
   gap: 1rem;
@@ -466,6 +474,25 @@ textarea {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.85rem;
+}
+
+.footer__info {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.footer__company-order {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.42rem;
+}
+
+.footer__company-order li {
+  color: #cfe5e8;
+  font-size: 0.84rem;
+  line-height: 1.65;
 }
 
 .footer__actions {
@@ -536,6 +563,10 @@ textarea {
 
   .footer__inner {
     grid-template-columns: auto auto;
+  }
+
+  .footer__company-order {
+    grid-template-columns: 1fr;
   }
 }
 
