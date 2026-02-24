@@ -2,13 +2,13 @@ name: Site Check
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
   check:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
