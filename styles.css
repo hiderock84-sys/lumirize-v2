@@ -178,10 +178,26 @@ img {
 }
 
 .hero {
+  position: relative;
+  overflow: hidden;
   padding-top: calc(var(--header-offset) + clamp(2rem, 6vw, 4rem));
 }
 
+.hero__bg-parallax {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(900px 420px at 10% 25%, rgba(25, 200, 198, 0.2), transparent 60%),
+    radial-gradient(840px 420px at 88% 20%, rgba(14, 164, 163, 0.12), transparent 62%);
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
 .hero__grid {
+  position: relative;
+  z-index: 1;
   display: grid;
   gap: 2rem;
   align-items: center;
@@ -206,6 +222,25 @@ h3 {
 h1 {
   font-size: clamp(2rem, 5vw, 3.8rem);
   margin-bottom: 1.1rem;
+}
+
+.hero__title {
+  margin-bottom: 1.05rem;
+  line-height: 1.06;
+  letter-spacing: -0.028em;
+  text-wrap: balance;
+}
+
+.hero__line {
+  display: block;
+}
+
+.hero__line--space {
+  height: 0.5em;
+}
+
+.hero__copy p {
+  max-width: 62ch;
 }
 
 h2 {
@@ -239,17 +274,28 @@ p {
   border-radius: 12px;
   padding: 0.72rem 1rem;
   font-weight: 700;
-  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    background-color 120ms ease,
+    border-color 120ms ease;
 }
 
 .btn:hover {
-  transform: translateY(-1px);
+  transform: scale(1.03);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.34);
 }
 
 .btn--primary {
   background: linear-gradient(135deg, var(--teal), var(--teal-deep));
   border-color: transparent;
   color: #031215;
+  box-shadow: 0 14px 28px rgba(14, 164, 163, 0.35);
+}
+
+.btn--primary:hover {
+  box-shadow: 0 20px 42px rgba(14, 164, 163, 0.52);
 }
 
 .btn--ghost {
@@ -289,6 +335,28 @@ p {
   background: rgba(238, 248, 250, 0.02);
 }
 
+.brand-thesis {
+  background: #010607;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: clamp(4.4rem, 11vw, 7.6rem) 0;
+}
+
+.brand-thesis__inner {
+  width: min(980px, calc(100% - 3rem));
+  margin: 0 auto;
+  text-align: center;
+}
+
+.brand-thesis__lead {
+  margin: 0;
+  color: #f1fdfd;
+  font-weight: 800;
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  font-size: clamp(2.1rem, 5vw, 3.4rem);
+}
+
 .cinematic {
   position: relative;
   display: grid;
@@ -305,6 +373,8 @@ p {
   border: 1px solid var(--line);
   box-shadow: var(--shadow);
   background: #02090b;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
 }
 
 .cinematic__img[data-scene] {
@@ -781,6 +851,14 @@ textarea {
   .cinematic__visual {
     position: relative;
     top: 0;
+  }
+
+  .hero__bg-parallax {
+    transform: none !important;
+  }
+
+  .cinematic__visual {
+    transform: none !important;
   }
 
   .reveal {
