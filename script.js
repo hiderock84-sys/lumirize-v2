@@ -96,6 +96,8 @@
       return;
     }
     menuToggle.setAttribute("aria-expanded", "false");
+    menuToggle.setAttribute("aria-label", "メニューを開く");
+    menuToggle.classList.remove("is-open");
     nav.classList.remove("is-open");
     body.classList.remove("menu-open");
   };
@@ -104,11 +106,17 @@
     menuToggle.addEventListener("click", () => {
       const nextExpanded = menuToggle.getAttribute("aria-expanded") !== "true";
       menuToggle.setAttribute("aria-expanded", String(nextExpanded));
+      menuToggle.setAttribute("aria-label", nextExpanded ? "メニューを閉じる" : "メニューを開く");
+      menuToggle.classList.toggle("is-open", nextExpanded);
       nav.classList.toggle("is-open", nextExpanded);
       body.classList.toggle("menu-open", nextExpanded);
     });
 
     nav.addEventListener("click", (event) => {
+      if (event.target === nav) {
+        closeMenu();
+        return;
+      }
       const link = event.target.closest("a");
       if (link) {
         closeMenu();
@@ -143,7 +151,14 @@
     } else if (typeof desktopQuery.addListener === "function") {
       desktopQuery.addListener(onDesktop);
     }
+
+    // iOSのページ復帰・再読込で状態が残るケースを防ぐ
+    window.addEventListener("pageshow", () => {
+      closeMenu();
+    });
   }
+
+  closeMenu();
 
   const scrollToAnchor = (id) => {
     if (!id || id === "#") {
