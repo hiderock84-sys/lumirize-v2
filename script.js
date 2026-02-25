@@ -274,7 +274,7 @@
         cinematicRafId = window.requestAnimationFrame(updateCinematicByScroll);
       };
 
-      activateScene(sceneOrder[0] || "1");
+      activateScene(normalizedSceneOrder[0]);
       window.addEventListener("scroll", requestCinematicUpdate, { passive: true });
       window.addEventListener("resize", requestCinematicUpdate);
       requestCinematicUpdate();
