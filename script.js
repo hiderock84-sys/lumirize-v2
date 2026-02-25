@@ -222,6 +222,8 @@
     const sceneBlocks = Array.from(story.querySelectorAll(".cinematic__block[data-scene]"));
 
     if (sceneImages.length > 0 && sceneBlocks.length > 0) {
+      const sceneOrder = sceneBlocks.map((block) => block.dataset.scene).filter(Boolean);
+
       const activateScene = (sceneId) => {
         if (sceneVisual) {
           sceneVisual.setAttribute("data-active-scene", sceneId);
@@ -236,55 +238,41 @@
         });
       };
 
-      activateScene(sceneBlocks[0].dataset.scene || "1");
+      const sceneByProgress = (progress) => {
+        if (progress < 1 / 3) {
+          return sceneOrder[0] || "1";
+        }
+        if (progress < 2 / 3) {
+          return sceneOrder[1] || sceneOrder[0] || "1";
+        }
+        return sceneOrder[2] || sceneOrder[sceneOrder.length - 1] || "1";
+      };
 
-      if ("IntersectionObserver" in window) {
-        const cinematicObserver = new IntersectionObserver(
-          (entries) => {
-            const visible = entries
-              .filter((entry) => entry.isIntersecting)
-              .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+      let cinematicRafId = 0;
+      const updateCinematicByScroll = () => {
+        cinematicRafId = 0;
+        const rect = story.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const storyTop = window.scrollY + rect.top;
+        const storyBottom = window.scrollY + rect.bottom;
+        const start = storyTop - vh * 0.28;
+        const end = storyBottom - vh * 0.42;
+        const span = Math.max(1, end - start);
+        const progress = Math.min(1, Math.max(0, (window.scrollY - start) / span));
+        activateScene(sceneByProgress(progress));
+      };
 
-            if (visible.length === 0) {
-              return;
-            }
+      const requestCinematicUpdate = () => {
+        if (cinematicRafId) {
+          return;
+        }
+        cinematicRafId = window.requestAnimationFrame(updateCinematicByScroll);
+      };
 
-            const sceneId = visible[0].target.dataset.scene;
-            if (sceneId) {
-              activateScene(sceneId);
-            }
-          },
-          {
-            root: null,
-            rootMargin: "-34% 0px -34% 0px",
-            threshold: [0.12, 0.32, 0.52, 0.72]
-          }
-        );
-
-        sceneBlocks.forEach((block) => cinematicObserver.observe(block));
-      } else {
-        const fallbackSwitch = () => {
-          const guideLine = window.scrollY + window.innerHeight * 0.48;
-          let nearest = sceneBlocks[0];
-          let nearestDistance = Number.POSITIVE_INFINITY;
-
-          sceneBlocks.forEach((block) => {
-            const rect = block.getBoundingClientRect();
-            const center = window.scrollY + rect.top + rect.height * 0.5;
-            const distance = Math.abs(center - guideLine);
-            if (distance < nearestDistance) {
-              nearest = block;
-              nearestDistance = distance;
-            }
-          });
-
-          const sceneId = nearest.dataset.scene || "1";
-          activateScene(sceneId);
-        };
-
-        window.addEventListener("scroll", fallbackSwitch, { passive: true });
-        fallbackSwitch();
-      }
+      activateScene(sceneOrder[0] || "1");
+      window.addEventListener("scroll", requestCinematicUpdate, { passive: true });
+      window.addEventListener("resize", requestCinematicUpdate);
+      requestCinematicUpdate();
     }
   }
 
