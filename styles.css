@@ -35,7 +35,10 @@ body {
     linear-gradient(180deg, var(--bg) 0%, var(--bg-alt) 100%);
   font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
   line-height: 1.8;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.012em;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  font-kerning: normal;
 }
 
 body.menu-open {
@@ -293,33 +296,36 @@ img {
 .eyebrow {
   margin: 0 0 0.8rem;
   color: #ccf4f4;
-  font-size: 0.76rem;
-  letter-spacing: 0.16em;
-  font-weight: 700;
+  font-size: 0.74rem;
+  letter-spacing: 0.2em;
+  font-weight: 600;
 }
 
 h1,
 h2,
 h3 {
   margin: 0;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
+  line-height: 1.18;
+  letter-spacing: -0.012em;
+  font-weight: 700;
 }
 
 h1 {
   font-size: clamp(2rem, 5vw, 3.8rem);
-  margin-bottom: 1.1rem;
+  margin-bottom: 1rem;
 }
 
 .hero__title {
   margin-bottom: 1.05rem;
-  line-height: 1.06;
-  letter-spacing: -0.028em;
+  line-height: 1.03;
+  letter-spacing: -0.022em;
+  font-weight: 760;
   text-wrap: balance;
 }
 
 .hero__line {
   display: block;
+  letter-spacing: -0.01em;
 }
 
 .hero__line:nth-child(1) {
@@ -335,16 +341,23 @@ h1 {
 }
 
 .hero__copy p {
-  max-width: 62ch;
+  max-width: 58ch;
+  letter-spacing: 0.014em;
 }
 
 h2 {
   font-size: clamp(1.7rem, 4vw, 2.7rem);
+  line-height: 1.16;
+  letter-spacing: -0.016em;
+  text-wrap: pretty;
 }
 
 h3 {
   font-size: clamp(1.15rem, 2.3vw, 1.5rem);
+  line-height: 1.28;
+  letter-spacing: -0.004em;
   margin-bottom: 0.7rem;
+  text-wrap: pretty;
 }
 
 p {
@@ -446,7 +459,7 @@ p {
 .brand-thesis__lead {
   margin: 0;
   color: #f1fdfd;
-  font-weight: 800;
+  font-weight: 760;
   line-height: 1.14;
   letter-spacing: 0.04em;
   font-size: clamp(2.1rem, 5vw, 3.4rem);
