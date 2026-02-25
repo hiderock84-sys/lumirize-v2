@@ -505,17 +505,17 @@ p {
 
 .cinematic__img--future {
   object-position: 50% 54%;
-  filter: hue-rotate(-8deg) saturate(0.95) brightness(1.06) contrast(0.96);
+  filter: hue-rotate(-3deg) saturate(0.92) brightness(1.03) contrast(0.98);
 }
 
 .cinematic__img--support {
   object-position: 50% 60%;
-  filter: hue-rotate(6deg) saturate(1.1) brightness(1.01) contrast(1.02);
+  filter: hue-rotate(2deg) saturate(1.03) brightness(1) contrast(1.01);
 }
 
 .cinematic__img--past {
   object-position: 50% 32%;
-  filter: hue-rotate(24deg) saturate(0.72) brightness(0.72) contrast(1.1);
+  filter: hue-rotate(16deg) saturate(0.82) brightness(0.84) contrast(1.06);
   transform: scale(1.08);
 }
 
