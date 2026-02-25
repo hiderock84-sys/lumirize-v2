@@ -223,6 +223,11 @@
 
     if (sceneImages.length > 0 && sceneBlocks.length > 0) {
       const sceneOrder = sceneBlocks.map((block) => block.dataset.scene).filter(Boolean);
+      const normalizedSceneOrder = [
+        sceneOrder[0] || "1",
+        sceneOrder[1] || sceneOrder[0] || "1",
+        sceneOrder[2] || sceneOrder[sceneOrder.length - 1] || sceneOrder[0] || "1"
+      ];
 
       const activateScene = (sceneId) => {
         if (sceneVisual) {
@@ -240,12 +245,12 @@
 
       const sceneByProgress = (progress) => {
         if (progress < 1 / 3) {
-          return sceneOrder[0] || "1";
+          return normalizedSceneOrder[0];
         }
         if (progress < 2 / 3) {
-          return sceneOrder[1] || sceneOrder[0] || "1";
+          return normalizedSceneOrder[1];
         }
-        return sceneOrder[2] || sceneOrder[sceneOrder.length - 1] || "1";
+        return normalizedSceneOrder[2];
       };
 
       let cinematicRafId = 0;
