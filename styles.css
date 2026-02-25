@@ -412,6 +412,10 @@ p {
 }
 
 .hero__visual {
+  position: relative;
+  width: min(100%, 430px);
+  margin-inline: auto;
+  aspect-ratio: 9 / 16;
   border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1px solid var(--line);
@@ -419,18 +423,34 @@ p {
   background: #040b0d;
 }
 
+.hero__visual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(2, 8, 12, 0.08) 44%, rgba(2, 8, 12, 0.34) 100%);
+}
+
 .hero__visual img {
   width: 100%;
-  min-height: 330px;
+  height: 100%;
   object-fit: cover;
+  object-position: center 34%;
 }
 
 .hero__visual figcaption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  margin: 0;
   padding: 0.9rem 1rem 1rem;
   color: #d9eff0;
   font-size: 0.9rem;
-  border-top: 1px solid var(--line-soft);
-  background: rgba(4, 11, 13, 0.85);
+  border-top: 1px solid rgba(238, 248, 250, 0.14);
+  background: linear-gradient(180deg, rgba(4, 11, 13, 0.1), rgba(4, 11, 13, 0.74));
 }
 
 .section-head {
@@ -496,6 +516,17 @@ p {
   transform: scale(1.03);
   transition: opacity 0.34s ease, transform 0.36s ease;
   z-index: 1;
+}
+
+.cinematic__img[data-scene="1"] {
+  opacity: 1; /* JS無効時のフォールバック */
+  transform: scale(1);
+}
+
+.cinematic__visual[data-active-scene="2"] .cinematic__img[data-scene="1"],
+.cinematic__visual[data-active-scene="3"] .cinematic__img[data-scene="1"] {
+  opacity: 0;
+  transform: scale(1.03);
 }
 
 .cinematic__img[data-scene].is-active {
@@ -594,10 +625,10 @@ p {
 .cinematic__line {
   margin: 0;
   color: #f3fcfc;
-  font-size: clamp(1.58rem, 3.35vw, 2.24rem);
+  font-size: clamp(1.24rem, 2.7vw, 2rem);
   line-height: 1.4;
   letter-spacing: 0.01em;
-  max-width: 18ch;
+  max-width: 24ch;
 }
 
 .cinematic__block--support .cinematic__line {
@@ -1128,6 +1159,12 @@ textarea {
 
   .cinematic__visual {
     transform: none !important;
+  }
+
+  .cinematic__img[data-scene],
+  .cinematic__block[data-scene],
+  .cinematic__overlay {
+    transition: none !important;
   }
 
   .reveal {
