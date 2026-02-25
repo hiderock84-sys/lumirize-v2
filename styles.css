@@ -275,8 +275,9 @@ img {
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(900px 420px at 10% 25%, rgba(25, 200, 198, 0.2), transparent 60%),
-    radial-gradient(840px 420px at 88% 20%, rgba(14, 164, 163, 0.12), transparent 62%);
+    radial-gradient(780px 360px at 12% 20%, rgba(18, 150, 152, 0.16), transparent 62%),
+    radial-gradient(720px 360px at 86% 20%, rgba(12, 122, 126, 0.1), transparent 64%),
+    linear-gradient(180deg, rgba(6, 74, 82, 0.7) 0%, rgba(4, 14, 18, 0.86) 46%, rgba(0, 0, 0, 0.98) 100%);
   transform: translate3d(0, 0, 0);
   will-change: transform;
 }
@@ -319,6 +320,14 @@ h1 {
 
 .hero__line {
   display: block;
+}
+
+.hero__line:nth-child(1) {
+  color: #f6ffff;
+}
+
+.hero__line:nth-child(2) {
+  opacity: 0.92;
 }
 
 .hero__line--space {
@@ -392,7 +401,7 @@ p {
   border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1px solid var(--line);
-  box-shadow: var(--shadow);
+  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.28);
   background: #040b0d;
 }
 
@@ -422,14 +431,14 @@ p {
 }
 
 .brand-thesis {
-  background: #010607;
+  background: #05070a;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  padding: clamp(4.4rem, 11vw, 7.6rem) 0;
+  padding: clamp(140px, 15vw, 200px) 0;
 }
 
 .brand-thesis__inner {
-  width: min(980px, calc(100% - 3rem));
+  width: min(720px, calc(100% - 3rem));
   margin: 0 auto;
   text-align: center;
 }
@@ -439,7 +448,7 @@ p {
   color: #f1fdfd;
   font-weight: 800;
   line-height: 1.14;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.04em;
   font-size: clamp(2.1rem, 5vw, 3.4rem);
 }
 
