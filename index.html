@@ -161,27 +161,30 @@
     <section id="story" class="section section--story" aria-labelledby="story-title">
       <div class="container">
         <header class="section-head reveal">
-          <p class="eyebrow">CINEMATIC SCROLL</p>
-          <h2 id="story-title">門を出る瞬間から、鍵を受け取る瞬間へ。</h2>
-          <p>
-            スクロールに合わせて scene1 から scene2 へ切り替わります。
-            テキストレイヤーは常に前面に固定し、読みやすさを守ります。
-          </p>
+          <p class="eyebrow">CINEMATIC EXPERIENCE</p>
+          <h2 id="story-title">未来、支援、過去。<br />3つの温度で記憶をたどる。</h2>
         </header>
 
         <div class="cinematic">
-          <div class="cinematic__visual" aria-hidden="true">
+          <div class="cinematic__visual" data-active-scene="1" aria-hidden="true">
             <img
-              class="cinematic__img is-active"
+              class="cinematic__img cinematic__img--future is-active"
               data-scene="1"
-              src="scene_gate.jpg"
+              src="scene_key.jpg"
               alt=""
               loading="eager"
             />
             <img
-              class="cinematic__img"
+              class="cinematic__img cinematic__img--support"
               data-scene="2"
               src="scene_key.jpg"
+              alt=""
+              loading="lazy"
+            />
+            <img
+              class="cinematic__img cinematic__img--past"
+              data-scene="3"
+              src="scene_gate.jpg"
               alt=""
               loading="lazy"
             />
@@ -189,26 +192,19 @@
           </div>
 
           <div class="cinematic__content">
-            <article class="cinematic__block is-active" data-scene="1" aria-current="true">
-              <p class="scene-index">SCENE 01</p>
-              <h3>その日いちばんの不安は、今夜どこで眠るか。</h3>
-              <p>
-                出所直後や回復初期は、住まいがないだけで就労・医療・手続きのすべてが不安定になります。
-                ルミライズは、孤立を深める前に居住の土台をつくることを優先します。
-              </p>
+            <article class="cinematic__block cinematic__block--future is-active" data-scene="1" aria-current="true">
+              <p class="scene-index">SCENE 01 / 未来</p>
+              <p class="cinematic__line">ここまで来れた。</p>
             </article>
 
-            <article class="cinematic__block" data-scene="2" aria-current="false">
-              <p class="scene-index">SCENE 02</p>
-              <h3>鍵を受け取った瞬間、支援は「理想」から「実行」へ。</h3>
-              <p>
-                住環境が整えば、回復支援・生活再建・関係機関連携が具体的に動きます。
-                「明日をどうするか」を、相談者と一緒に設計できる状態をつくります。
-              </p>
-              <div class="cta-row">
-                <a class="btn btn--primary" href="#contact">無料相談へ進む</a>
-                <a class="btn btn--ghost" href="tel:0427048308">電話で相談する</a>
-              </div>
+            <article class="cinematic__block cinematic__block--support" data-scene="2" aria-current="false">
+              <p class="scene-index">SCENE 02 / 支援</p>
+              <p class="cinematic__line">支援は、理想ではなく、現実になる。</p>
+            </article>
+
+            <article class="cinematic__block cinematic__block--past" data-scene="3" aria-current="false">
+              <p class="scene-index">SCENE 03 / 過去</p>
+              <p class="cinematic__line">“立ち直れ”の前に、“戻れる場所”を。</p>
             </article>
           </div>
         </div>

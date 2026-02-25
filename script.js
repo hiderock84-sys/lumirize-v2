@@ -60,7 +60,8 @@
       return;
     }
 
-    parallaxState.target = window.scrollY * 0.01;
+    const maxShift = window.innerHeight * 0.02;
+    parallaxState.target = Math.min(maxShift, window.scrollY * 0.01);
     if (!parallaxState.rafId) {
       parallaxState.rafId = window.requestAnimationFrame(renderParallax);
     }
@@ -216,11 +217,15 @@
   }
 
   if (story) {
+    const sceneVisual = story.querySelector(".cinematic__visual");
     const sceneImages = Array.from(story.querySelectorAll(".cinematic__img[data-scene]"));
     const sceneBlocks = Array.from(story.querySelectorAll(".cinematic__block[data-scene]"));
 
     if (sceneImages.length > 0 && sceneBlocks.length > 0) {
       const activateScene = (sceneId) => {
+        if (sceneVisual) {
+          sceneVisual.setAttribute("data-active-scene", sceneId);
+        }
         sceneImages.forEach((image) => {
           image.classList.toggle("is-active", image.dataset.scene === sceneId);
         });
