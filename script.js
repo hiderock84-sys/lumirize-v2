@@ -88,6 +88,9 @@
 
   setHeaderOffset();
   window.addEventListener("resize", setHeaderOffset);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", setHeaderOffset);
+  }
   window.addEventListener("resize", scheduleParallax);
   window.addEventListener("scroll", scheduleParallax, { passive: true });
   scheduleParallax();
@@ -160,6 +163,13 @@
   }
 
   closeMenu();
+  window.addEventListener("orientationchange", () => {
+    closeMenu();
+    window.setTimeout(() => {
+      setHeaderOffset();
+      scheduleParallax();
+    }, 120);
+  });
 
   const scrollToAnchor = (id) => {
     if (!id || id === "#") {

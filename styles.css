@@ -24,6 +24,7 @@
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -96,6 +97,7 @@ img {
   position: fixed;
   inset: 0 0 auto 0;
   z-index: 1200;
+  padding-top: env(safe-area-inset-top);
   background: rgba(6, 20, 23, 0.88);
   border-bottom: 1px solid var(--line-soft);
   backdrop-filter: blur(14px);
@@ -131,6 +133,8 @@ img {
   padding: 0 13px;
   cursor: pointer;
   z-index: 1302;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition: background-color 180ms ease, border-color 180ms ease;
 }
 
@@ -163,7 +167,8 @@ img {
   position: fixed;
   inset: 0;
   z-index: 1300;
-  padding: calc(var(--header-offset) + 0.7rem) 1rem 1.2rem;
+  min-height: 100dvh;
+  padding: calc(var(--header-offset) + 0.7rem) 1rem calc(1.2rem + env(safe-area-inset-bottom));
   background:
     radial-gradient(900px 440px at 18% 8%, rgba(25, 200, 198, 0.2), transparent 65%),
     linear-gradient(180deg, rgba(2, 9, 12, 0.88), rgba(4, 16, 20, 0.96));
@@ -185,11 +190,13 @@ img {
   max-height: calc(100dvh - var(--header-offset) - 1.9rem);
   margin: 0 auto;
   overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   border-radius: 22px;
   border: 1px solid rgba(238, 248, 250, 0.2);
   background: linear-gradient(160deg, rgba(12, 32, 38, 0.95), rgba(9, 25, 31, 0.93));
   box-shadow: 0 28px 70px rgba(0, 0, 0, 0.45);
-  padding: 1.05rem;
+  padding: 1.05rem 1.05rem calc(1.05rem + env(safe-area-inset-bottom));
   display: grid;
   gap: 0.58rem;
 }
@@ -394,6 +401,7 @@ p {
 .btn {
   border: 1px solid var(--line);
   border-radius: 12px;
+  min-height: 44px;
   padding: 0.72rem 1rem;
   font-weight: 700;
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
@@ -1184,6 +1192,12 @@ textarea {
     letter-spacing: -0.018em;
   }
 
+  .hero__subtitle {
+    font-size: clamp(1rem, 4.8vw, 1.35rem);
+    line-height: 1.58;
+    margin-top: 18px;
+  }
+
   h2 {
     font-size: clamp(1.52rem, 6.4vw, 2rem);
     line-height: 1.18;
@@ -1215,6 +1229,18 @@ textarea {
 
   .site-nav__link small {
     font-size: 0.69rem;
+  }
+}
+
+@supports (height: 100svh) {
+  @media (max-width: 899px) {
+    .cinematic__visual {
+      min-height: min(56svh, 620px);
+    }
+
+    .cinematic__block[data-scene] {
+      min-height: min(72svh, 560px);
+    }
   }
 }
 
