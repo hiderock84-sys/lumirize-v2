@@ -829,7 +829,7 @@ p {
   height: 80vh !important;
 }
 
-#story .cinematic__block[data-scene] {
+.cinematic__block {
   position: absolute;
   left: 18px;
   right: 18px;

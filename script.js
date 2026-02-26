@@ -415,6 +415,7 @@
 
       window.addEventListener("scroll", requestCinematicUpdate, { passive: true });
       window.addEventListener("resize", requestCinematicUpdate);
+      window.addEventListener("orientationchange", requestCinematicUpdate, { passive: true });
     }
   }
 
