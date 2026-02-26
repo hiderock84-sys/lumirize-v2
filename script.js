@@ -4,6 +4,7 @@
   const header = document.querySelector(".site-header");
   const menuToggle = document.querySelector(".menu-toggle");
   const nav = document.querySelector("#site-nav");
+  const rawToggle = document.querySelector("#raw-toggle");
   const story = document.querySelector("#story");
   const heroParallaxLayer = document.querySelector(".hero__bg-parallax");
   const cinematicVisual = document.querySelector(".cinematic__visual");
@@ -19,6 +20,35 @@
     const headerHeight = header ? header.offsetHeight : 78;
     root.style.setProperty("--header-offset", `${headerHeight + 14}px`);
   };
+
+  const RAW_MODE_STORAGE_KEY = "lumirize.rawMode";
+  const syncRawMode = (enabled) => {
+    body.classList.toggle("is-raw", enabled);
+    if (rawToggle) {
+      rawToggle.classList.toggle("is-active", enabled);
+      rawToggle.setAttribute("aria-pressed", String(enabled));
+    }
+  };
+
+  if (rawToggle) {
+    let initialRawMode = false;
+    try {
+      initialRawMode = window.localStorage.getItem(RAW_MODE_STORAGE_KEY) === "1";
+    } catch (_error) {
+      initialRawMode = false;
+    }
+    syncRawMode(initialRawMode);
+
+    rawToggle.addEventListener("click", () => {
+      const nextRawMode = !body.classList.contains("is-raw");
+      syncRawMode(nextRawMode);
+      try {
+        window.localStorage.setItem(RAW_MODE_STORAGE_KEY, nextRawMode ? "1" : "0");
+      } catch (_error) {
+        // ストレージ不可環境では永続化せず継続
+      }
+    });
+  }
 
   const setParallaxPosition = (value) => {
     if (heroParallaxLayer) {
@@ -238,7 +268,7 @@
       const S2_TO_S1 = 0.40;
       const S2_TO_S3 = 0.80;
       const S3_TO_S2 = 0.70;
-      const MIN_SCENE1_HOLD_MS = 1000;
+      const MIN_SCENE_HOLD_MS = 1000;
 
       let activeSceneId = scene1Id;
       let lastSceneActivatedAt = window.performance.now();
@@ -311,11 +341,7 @@
         }
 
         const now = window.performance.now();
-        if (
-          activeSceneId === scene1Id &&
-          nextSceneId === scene2Id &&
-          now - lastSceneActivatedAt < MIN_SCENE1_HOLD_MS
-        ) {
+        if (now - lastSceneActivatedAt < MIN_SCENE_HOLD_MS) {
           return;
         }
 
