@@ -518,18 +518,15 @@ p {
   z-index: 1;
 }
 
-.cinematic__img[data-scene="1"] {
-  opacity: 1; /* JS無効時のフォールバック */
+.cinematic__img[data-scene].is-active {
+  opacity: 1;
   transform: scale(1);
 }
 
-.cinematic__visual[data-active-scene="2"] .cinematic__img[data-scene="1"],
-.cinematic__visual[data-active-scene="3"] .cinematic__img[data-scene="1"] {
-  opacity: 0;
-  transform: scale(1.03);
-}
-
-.cinematic__img[data-scene].is-active {
+/* JS遅延/停止時でもactive sceneの画像を必ず表示 */
+.cinematic__visual[data-active-scene="1"] .cinematic__img[data-scene="1"],
+.cinematic__visual[data-active-scene="2"] .cinematic__img[data-scene="2"],
+.cinematic__visual[data-active-scene="3"] .cinematic__img[data-scene="3"] {
   opacity: 1;
   transform: scale(1);
 }
