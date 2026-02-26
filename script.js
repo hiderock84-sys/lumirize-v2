@@ -269,6 +269,7 @@
       let activeSceneId = scene1Id;
       let lastSceneActivatedAt = window.performance.now();
       let lastProgress = -1;
+      let storyIsVisible = false;
 
       const activateScene = (sceneId, force = false) => {
         if (!force && sceneId === activeSceneId) {
@@ -318,6 +319,9 @@
       let cinematicRafId = 0;
       const updateCinematicByScroll = () => {
         cinematicRafId = 0;
+        if (!storyIsVisible) {
+          return;
+        }
         const rect = story.getBoundingClientRect();
         const vh = window.innerHeight;
         const storyTop = window.scrollY + rect.top;
@@ -354,16 +358,55 @@
       };
 
       const requestCinematicUpdate = () => {
+        if (!storyIsVisible) {
+          return;
+        }
         if (cinematicRafId) {
           return;
         }
         cinematicRafId = window.requestAnimationFrame(updateCinematicByScroll);
       };
 
-      activateScene(scene1Id, true);
+      const setStoryVisibility = (isVisible) => {
+        if (storyIsVisible === isVisible) {
+          return;
+        }
+        storyIsVisible = isVisible;
+        if (storyIsVisible) {
+          lastProgress = -1;
+          activateScene(scene1Id, true);
+          requestCinematicUpdate();
+        }
+      };
+
+      if ("IntersectionObserver" in window) {
+        const storyObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.target !== story) {
+                return;
+              }
+              setStoryVisibility(entry.isIntersecting && entry.intersectionRatio > 0.05);
+            });
+          },
+          {
+            threshold: [0, 0.05, 0.2],
+            root: null,
+            rootMargin: "-6% 0px -6% 0px"
+          }
+        );
+        storyObserver.observe(story);
+      } else {
+        setStoryVisibility(true);
+      }
+
       window.addEventListener("scroll", requestCinematicUpdate, { passive: true });
-      window.addEventListener("resize", requestCinematicUpdate);
-      requestCinematicUpdate();
+      window.addEventListener("resize", () => {
+        if (!storyIsVisible) {
+          return;
+        }
+        requestCinematicUpdate();
+      });
     }
   }
 

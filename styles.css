@@ -799,6 +799,54 @@ p {
   border-color: rgba(225, 244, 246, 0.36);
 }
 
+/* === Force contain mode overrides (must win) === */
+.cinematic__img[data-scene] {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  display: block !important;
+}
+
+.cinematic__media,
+.cinematic__visual.cinematic__media {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  height: auto !important;
+  max-height: 92vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 40%, rgba(0, 180, 182, 0.1), rgba(0, 0, 0, 0.88) 60%);
+  overflow: hidden;
+}
+
+.cinematic {
+  padding-bottom: 40px !important;
+}
+
+.cinematic__spacer {
+  height: 80vh !important;
+}
+
+.cinematic__block {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
+  z-index: 20;
+  background: rgba(10, 20, 25, 0.65);
+  backdrop-filter: blur(8px);
+}
+
+.is-raw .cinematic__img {
+  filter: none !important;
+}
+
+.is-raw .cinematic__overlay {
+  opacity: 0 !important;
+}
+
 .cards {
   display: grid;
   gap: 1rem;
