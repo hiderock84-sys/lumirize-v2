@@ -7,7 +7,6 @@
   const rawToggle = document.querySelector("#raw-toggle");
   const story = document.querySelector("#story");
   const heroParallaxLayer = document.querySelector(".hero__bg-parallax");
-  const cinematicVisual = document.querySelector(".cinematic__visual");
   const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
   let reducedMotion = motionQuery.matches;
   const parallaxState = {
@@ -53,9 +52,6 @@
   const setParallaxPosition = (value) => {
     if (heroParallaxLayer) {
       heroParallaxLayer.style.transform = `translate3d(0, ${value}px, 0)`;
-    }
-    if (cinematicVisual) {
-      cinematicVisual.style.transform = `translate3d(0, ${value}px, 0)`;
     }
   };
 
@@ -262,13 +258,13 @@
       const scene2Id = normalizedSceneOrder[1];
       const scene3Id = normalizedSceneOrder[2];
 
-      const SCENE1_RANGE_END = 0.45;
-      const SCENE2_RANGE_END = 0.75;
-      const S1_TO_S2 = 0.50;
-      const S2_TO_S1 = 0.40;
-      const S2_TO_S3 = 0.80;
-      const S3_TO_S2 = 0.70;
-      const MIN_SCENE_HOLD_MS = 1000;
+      const SCENE1_RANGE_END = 0.50;
+      const SCENE2_RANGE_END = 0.80;
+      const S1_TO_S2 = 0.55;
+      const S2_TO_S1 = 0.45;
+      const S2_TO_S3 = 0.85;
+      const S3_TO_S2 = 0.75;
+      const MIN_SCENE1_HOLD_MS = 1000;
 
       let activeSceneId = scene1Id;
       let lastSceneActivatedAt = window.performance.now();
@@ -341,7 +337,11 @@
         }
 
         const now = window.performance.now();
-        if (now - lastSceneActivatedAt < MIN_SCENE_HOLD_MS) {
+        if (
+          activeSceneId === scene1Id &&
+          nextSceneId === scene2Id &&
+          now - lastSceneActivatedAt < MIN_SCENE1_HOLD_MS
+        ) {
           return;
         }
 

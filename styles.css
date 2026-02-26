@@ -464,6 +464,7 @@ p {
   border-top: 1px solid var(--line-soft);
   border-bottom: 1px solid var(--line-soft);
   background: rgba(238, 248, 250, 0.02);
+  padding-bottom: clamp(2.2rem, 5vw, 3.2rem);
 }
 
 .brand-thesis {
@@ -534,8 +535,8 @@ p {
   border: 1px solid var(--line);
   box-shadow: var(--shadow);
   background: #02090b;
-  transform: translate3d(0, 0, 0);
-  will-change: transform;
+  transform: none;
+  will-change: auto;
 }
 
 .cinematic__img[data-scene] {
@@ -543,7 +544,8 @@ p {
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center center;
   opacity: 0;
   transform: none;
   transition: opacity 0.6s ease;
@@ -564,18 +566,18 @@ p {
 }
 
 .cinematic__img--future {
-  object-position: 52% 50%;
-  filter: hue-rotate(-3deg) saturate(0.92) brightness(1.03) contrast(0.98);
+  object-position: center center;
+  filter: none;
 }
 
 .cinematic__img--support {
-  object-position: 60% 58%;
-  filter: hue-rotate(2deg) saturate(1.03) brightness(1) contrast(1.01);
+  object-position: center center;
+  filter: none;
 }
 
 .cinematic__img--past {
-  object-position: 50% 28%;
-  filter: hue-rotate(16deg) saturate(0.82) brightness(0.84) contrast(1.06);
+  object-position: center center;
+  filter: none;
 }
 
 .cinematic__overlay {
@@ -583,22 +585,22 @@ p {
   inset: 0;
   z-index: 2;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(8, 30, 42, 0.2), rgba(0, 0, 0, 0.46));
+  background: linear-gradient(180deg, rgba(8, 30, 42, 0.12), rgba(0, 0, 0, 0.3));
   transition: background 0.6s ease;
 }
 
 .cinematic__visual[data-active-scene="1"] .cinematic__overlay {
   background:
-    radial-gradient(circle at 50% 45%, rgba(131, 198, 218, 0.2) 0%, rgba(106, 170, 194, 0.1) 30%, rgba(76, 131, 154, 0) 58%),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.24) 0%, rgba(8, 26, 38, 0.36) 48%, rgba(0, 0, 0, 0.5) 100%);
+    radial-gradient(circle at 50% 45%, rgba(131, 198, 218, 0.12) 0%, rgba(106, 170, 194, 0.06) 30%, rgba(76, 131, 154, 0) 58%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(8, 26, 38, 0.25) 48%, rgba(0, 0, 0, 0.35) 100%);
 }
 
 .cinematic__visual[data-active-scene="2"] .cinematic__overlay {
-  background: linear-gradient(180deg, rgba(12, 59, 66, 0.28), rgba(5, 36, 40, 0.56) 52%, rgba(0, 0, 0, 0.64));
+  background: linear-gradient(180deg, rgba(12, 59, 66, 0.18), rgba(5, 36, 40, 0.26) 52%, rgba(0, 0, 0, 0.38));
 }
 
 .cinematic__visual[data-active-scene="3"] .cinematic__overlay {
-  background: linear-gradient(180deg, rgba(9, 19, 37, 0.3), rgba(4, 8, 16, 0.64) 46%, rgba(0, 0, 0, 0.82));
+  background: linear-gradient(180deg, rgba(9, 19, 37, 0.16), rgba(4, 8, 16, 0.28) 46%, rgba(0, 0, 0, 0.44));
 }
 
 .cinematic__content {
@@ -684,12 +686,21 @@ p {
 /* RAW切替対応 + 画像を最大で見せるシネマ表示 */
 .cinematic {
   gap: 0;
-  min-height: clamp(180vh, 220vh, 260vh);
+  min-height: clamp(165vh, 192vh, 220vh);
 }
 
 .cinematic__visual {
   min-height: min(92vh, 920px);
   height: min(92vh, 920px);
+}
+
+.cinematic__media {
+  height: min(92vh, 920px);
+  max-height: 92vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 40%, rgba(0, 180, 182, 0.1), rgba(0, 0, 0, 0.88) 60%);
 }
 
 .cinematic__content {
@@ -780,7 +791,7 @@ p {
 .is-raw .cinematic__visual[data-active-scene="1"] .cinematic__overlay,
 .is-raw .cinematic__visual[data-active-scene="2"] .cinematic__overlay,
 .is-raw .cinematic__visual[data-active-scene="3"] .cinematic__overlay {
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.16)) !important;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.1)) !important;
 }
 
 .is-raw .cinematic__block[data-scene] {
@@ -1225,25 +1236,26 @@ textarea {
 
 @media (min-width: 1024px) {
   .cinematic__media {
-    height: min(92vh, 1020px);
+    height: min(92vh, 920px);
     max-height: 92vh;
   }
 
   .cinematic__img[data-scene] {
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center center;
   }
 
   .cinematic__img--past {
-    object-position: center 35%;
-    filter: brightness(1.22) contrast(1.12) saturate(0.95) hue-rotate(-5deg);
+    object-position: center center;
+    filter: none;
   }
 
   .cinematic__img--support {
-    object-position: center 40%;
+    object-position: center center;
   }
 
   .cinematic__img--future {
-    object-position: center 35%;
+    object-position: center center;
   }
 
   .cinematic__visual[data-active-scene="1"] .cinematic__overlay {
@@ -1263,7 +1275,7 @@ textarea {
   }
 
   .cinematic {
-    min-height: clamp(170vh, 205vh, 240vh);
+    min-height: clamp(160vh, 192vh, 220vh);
   }
 
   .cinematic__visual,
@@ -1284,14 +1296,12 @@ textarea {
     right: 0.62rem;
   }
 
-  .cinematic__img--past {
-    filter: brightness(1.08) contrast(1.08) saturate(0.9) hue-rotate(-3deg);
-  }
 }
 
 @media (max-width: 899px) {
   .cinematic__visual {
-    min-height: 52vh;
+    min-height: min(92vh, 920px);
+    height: min(92vh, 920px);
   }
 
   .cinematic__block[data-scene] {
