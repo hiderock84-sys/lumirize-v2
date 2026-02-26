@@ -265,6 +265,7 @@
       const S2_TO_S3 = 0.88;
       const S3_TO_S2 = 0.75;
       const MIN_SCENE1_HOLD_MS = 1000;
+      const DEBUG_SCENE_LOG = false;
 
       let activeSceneId = scene1Id;
       let lastSceneActivatedAt = window.performance.now();
@@ -288,6 +289,9 @@
           block.classList.toggle("is-active", active);
           block.setAttribute("aria-current", active ? "true" : "false");
         });
+        if (DEBUG_SCENE_LOG) {
+          console.log(`currentScene=${sceneId}`);
+        }
       };
 
       const sceneByProgress = (progress) => {
@@ -317,8 +321,9 @@
       };
 
       let cinematicRafId = 0;
+      let cinematicNeedsUpdate = false;
+
       const updateCinematicByScroll = () => {
-        cinematicRafId = 0;
         if (!storyIsVisible) {
           return;
         }
@@ -358,13 +363,21 @@
       };
 
       const requestCinematicUpdate = () => {
+        cinematicNeedsUpdate = true;
         if (!storyIsVisible) {
           return;
         }
         if (cinematicRafId) {
           return;
         }
-        cinematicRafId = window.requestAnimationFrame(updateCinematicByScroll);
+        cinematicRafId = window.requestAnimationFrame(() => {
+          cinematicRafId = 0;
+          if (!cinematicNeedsUpdate) {
+            return;
+          }
+          cinematicNeedsUpdate = false;
+          updateCinematicByScroll();
+        });
       };
 
       const setStoryVisibility = (isVisible) => {
@@ -401,12 +414,7 @@
       }
 
       window.addEventListener("scroll", requestCinematicUpdate, { passive: true });
-      window.addEventListener("resize", () => {
-        if (!storyIsVisible) {
-          return;
-        }
-        requestCinematicUpdate();
-      });
+      window.addEventListener("resize", requestCinematicUpdate);
     }
   }
 
