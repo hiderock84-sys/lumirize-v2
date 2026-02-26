@@ -228,8 +228,27 @@
         sceneOrder[1] || sceneOrder[0] || "1",
         sceneOrder[2] || sceneOrder[sceneOrder.length - 1] || sceneOrder[0] || "1"
       ];
+      const scene1Id = normalizedSceneOrder[0];
+      const scene2Id = normalizedSceneOrder[1];
+      const scene3Id = normalizedSceneOrder[2];
 
-      const activateScene = (sceneId) => {
+      const SCENE1_RANGE_END = 0.45;
+      const SCENE2_RANGE_END = 0.75;
+      const S1_TO_S2 = 0.50;
+      const S2_TO_S1 = 0.40;
+      const S2_TO_S3 = 0.80;
+      const S3_TO_S2 = 0.70;
+      const MIN_SCENE1_HOLD_MS = 1000;
+
+      let activeSceneId = scene1Id;
+      let lastSceneActivatedAt = window.performance.now();
+
+      const activateScene = (sceneId, force = false) => {
+        if (!force && sceneId === activeSceneId) {
+          return;
+        }
+        activeSceneId = sceneId;
+        lastSceneActivatedAt = window.performance.now();
         if (sceneVisual) {
           sceneVisual.setAttribute("data-active-scene", sceneId);
         }
@@ -244,13 +263,29 @@
       };
 
       const sceneByProgress = (progress) => {
-        if (progress < 1 / 3) {
-          return normalizedSceneOrder[0];
+        if (progress < SCENE1_RANGE_END) {
+          return scene1Id;
         }
-        if (progress < 2 / 3) {
-          return normalizedSceneOrder[1];
+        if (progress < SCENE2_RANGE_END) {
+          return scene2Id;
         }
-        return normalizedSceneOrder[2];
+        return scene3Id;
+      };
+
+      const sceneByHysteresis = (progress) => {
+        if (activeSceneId === scene1Id) {
+          return progress > S1_TO_S2 ? scene2Id : scene1Id;
+        }
+        if (activeSceneId === scene2Id) {
+          if (progress < S2_TO_S1) {
+            return scene1Id;
+          }
+          if (progress > S2_TO_S3) {
+            return scene3Id;
+          }
+          return scene2Id;
+        }
+        return progress < S3_TO_S2 ? scene2Id : scene3Id;
       };
 
       let cinematicRafId = 0;
@@ -264,7 +299,27 @@
         const end = storyBottom - vh * 0.42;
         const span = Math.max(1, end - start);
         const progress = Math.min(1, Math.max(0, (window.scrollY - start) / span));
-        activateScene(sceneByProgress(progress));
+
+        if (reducedMotion) {
+          activateScene(sceneByProgress(progress));
+          return;
+        }
+
+        const nextSceneId = sceneByHysteresis(progress);
+        if (nextSceneId === activeSceneId) {
+          return;
+        }
+
+        const now = window.performance.now();
+        if (
+          activeSceneId === scene1Id &&
+          nextSceneId === scene2Id &&
+          now - lastSceneActivatedAt < MIN_SCENE1_HOLD_MS
+        ) {
+          return;
+        }
+
+        activateScene(nextSceneId);
       };
 
       const requestCinematicUpdate = () => {
@@ -274,7 +329,7 @@
         cinematicRafId = window.requestAnimationFrame(updateCinematicByScroll);
       };
 
-      activateScene(normalizedSceneOrder[0]);
+      activateScene(scene1Id, true);
       window.addEventListener("scroll", requestCinematicUpdate, { passive: true });
       window.addEventListener("resize", requestCinematicUpdate);
       requestCinematicUpdate();
