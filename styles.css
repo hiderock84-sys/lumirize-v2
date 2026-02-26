@@ -315,14 +315,14 @@ p {
   object-fit: cover;
   object-position: center 50%;
   opacity: 0;
-  transform: scale(1.04);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transform: none;
+  transition: opacity 0.8s ease;
   z-index: 1;
 }
 
 .cinematic__img[data-scene].is-active {
   opacity: 1;
-  transform: scale(1);
+  transform: none;
 }
 
 .cinematic__overlay {
@@ -330,8 +330,8 @@ p {
   inset: 0;
   z-index: 2;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(8, 30, 40, 0.22) 0%, rgba(4, 18, 30, 0.38) 56%, rgba(2, 12, 22, 0.48) 100%);
-  transition: background 0.6s ease;
+  background: linear-gradient(180deg, rgba(9, 31, 42, 0.2) 0%, rgba(5, 20, 33, 0.34) 56%, rgba(2, 13, 24, 0.4) 100%);
+  transition: background 0.8s ease;
 }
 
 .cinematic__content {
@@ -355,12 +355,22 @@ p {
   justify-content: center;
   opacity: 0.62;
   transform: translateY(12px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  transition: opacity 1s ease, transform 1s ease;
 }
 
 .cinematic__block[data-scene].is-active {
   opacity: 1;
   transform: translateY(0);
+}
+
+.cinematic__block[data-scene].is-copy-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cinematic__block[data-scene="1"].is-active:not(.is-copy-visible) {
+  opacity: 0;
+  transform: translateY(16px);
 }
 
 .scene-index {
@@ -585,7 +595,7 @@ textarea {
   .cinematic__img[data-scene="1"] {
     object-fit: cover;
     object-position: center 40%;
-    filter: brightness(0.95) contrast(1.14) saturate(0.9) hue-rotate(-4deg);
+    filter: brightness(0.98) contrast(1.12) saturate(0.92) hue-rotate(-4deg);
   }
 
   .cinematic__img[data-scene="2"] {
@@ -595,9 +605,9 @@ textarea {
 
   .cinematic__visual[data-active-scene="1"] .cinematic__overlay {
     background:
-      radial-gradient(circle at 50% 40%, rgba(109, 181, 209, 0.2) 0%, rgba(92, 160, 186, 0.1) 24%, rgba(70, 126, 149, 0) 52%),
-      radial-gradient(ellipse at 50% 42%, rgba(0, 0, 0, 0) 44%, rgba(0, 0, 0, 0.18) 74%, rgba(0, 0, 0, 0.32) 100%),
-      linear-gradient(180deg, rgba(12, 38, 52, 0.24) 0%, rgba(6, 20, 34, 0.38) 58%, rgba(2, 12, 22, 0.44) 100%);
+      radial-gradient(circle at 50% 40%, rgba(122, 191, 214, 0.18) 0%, rgba(102, 168, 191, 0.09) 26%, rgba(76, 132, 152, 0) 54%),
+      radial-gradient(ellipse at 50% 42%, rgba(0, 0, 0, 0) 46%, rgba(0, 0, 0, 0.2) 74%, rgba(0, 0, 0, 0.34) 100%),
+      linear-gradient(180deg, rgba(14, 40, 54, 0.23) 0%, rgba(7, 22, 35, 0.34) 58%, rgba(2, 13, 24, 0.38) 100%);
   }
 
   .cinematic__block[data-scene] {
@@ -607,6 +617,27 @@ textarea {
   .cinematic__block[data-scene] h3,
   .cinematic__block[data-scene] p {
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.56);
+  }
+}
+
+@media (min-width: 1201px) {
+  .cinematic__visual {
+    max-height: 85vh;
+    height: min(85vh, 840px);
+    aspect-ratio: 2 / 3;
+  }
+
+  .cinematic__img[data-scene="1"] {
+    object-fit: contain;
+    object-position: center 30%;
+  }
+
+  .cinematic__visual[data-active-scene="1"] .cinematic__overlay {
+    background:
+      linear-gradient(180deg, rgba(6, 18, 30, 0.3) 0%, rgba(6, 18, 30, 0.14) 22%, rgba(6, 18, 30, 0) 38%),
+      radial-gradient(circle at 50% 36%, rgba(125, 194, 218, 0.2) 0%, rgba(107, 173, 196, 0.1) 24%, rgba(74, 130, 150, 0) 52%),
+      radial-gradient(ellipse at 50% 44%, rgba(0, 0, 0, 0) 48%, rgba(0, 0, 0, 0.22) 76%, rgba(0, 0, 0, 0.36) 100%),
+      linear-gradient(180deg, rgba(12, 36, 50, 0.23) 0%, rgba(7, 22, 35, 0.32) 56%, rgba(2, 13, 24, 0.37) 100%);
   }
 }
 

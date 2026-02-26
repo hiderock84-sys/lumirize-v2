@@ -152,16 +152,19 @@
       const firstSceneId = sceneIds[0] || "1";
       const secondSceneId = sceneIds[1] || firstSceneId;
 
-      const SCENE_ONE_TRANSITION_PROGRESS = 0.58;
-      const TEXT_FADE_IN_MS = 800;
-      const POST_TEXT_HOLD_MS = 1000;
+      const SCENE_ONE_TRANSITION_PROGRESS = 0.62;
+      const SCENE_ONE_TEXT_DELAY_MS = 2000;
+      const TEXT_FADE_IN_MS = 1000;
+      const POST_TEXT_HOLD_MS = 1200;
 
       let activeSceneId = firstSceneId;
       let sceneOneActivatedAt = window.performance.now();
       let storyEntered = false;
       let pendingSceneId = "";
       let pendingTimer = 0;
+      let sceneOneTextTimer = 0;
       let cinematicRafId = 0;
+      let sceneOneCopyVisible = false;
 
       const clearPendingTransition = () => {
         if (pendingTimer) {
@@ -169,6 +172,39 @@
           pendingTimer = 0;
         }
         pendingSceneId = "";
+      };
+
+      const clearSceneOneTextReveal = () => {
+        if (sceneOneTextTimer) {
+          window.clearTimeout(sceneOneTextTimer);
+          sceneOneTextTimer = 0;
+        }
+      };
+
+      const syncCopyVisibility = () => {
+        sceneBlocks.forEach((block) => {
+          const isActive = block.dataset.scene === activeSceneId;
+          const isSceneOne = block.dataset.scene === firstSceneId;
+          const visible = isActive && (!isSceneOne || sceneOneCopyVisible);
+          block.classList.toggle("is-copy-visible", visible);
+        });
+      };
+
+      const scheduleSceneOneTextReveal = () => {
+        clearSceneOneTextReveal();
+        if (activeSceneId !== firstSceneId) {
+          return;
+        }
+        sceneOneCopyVisible = false;
+        syncCopyVisibility();
+        sceneOneTextTimer = window.setTimeout(() => {
+          sceneOneTextTimer = 0;
+          if (activeSceneId !== firstSceneId) {
+            return;
+          }
+          sceneOneCopyVisible = true;
+          syncCopyVisibility();
+        }, SCENE_ONE_TEXT_DELAY_MS);
       };
 
       const activateScene = (sceneId, options = {}) => {
@@ -193,7 +229,13 @@
 
         if (sceneId === firstSceneId) {
           sceneOneActivatedAt = window.performance.now();
+          scheduleSceneOneTextReveal();
+          return;
         }
+
+        sceneOneCopyVisible = false;
+        clearSceneOneTextReveal();
+        syncCopyVisibility();
       };
 
       const getStoryProgress = () => {
@@ -208,7 +250,7 @@
       };
 
       const scheduleSceneTwoTransition = (delayMs) => {
-        if (reducedMotion || delayMs <= 0) {
+        if (delayMs <= 0) {
           clearPendingTransition();
           activateScene(secondSceneId);
           return;
@@ -234,6 +276,7 @@
           storyEntered = true;
           if (activeSceneId === firstSceneId) {
             sceneOneActivatedAt = window.performance.now();
+            scheduleSceneOneTextReveal();
           }
         }
 
@@ -249,8 +292,8 @@
         }
 
         const now = window.performance.now();
-        const earliestTransitionAt = sceneOneActivatedAt + TEXT_FADE_IN_MS + POST_TEXT_HOLD_MS;
-        const waitMs = reducedMotion ? 0 : Math.max(0, earliestTransitionAt - now);
+        const earliestTransitionAt = sceneOneActivatedAt + SCENE_ONE_TEXT_DELAY_MS + TEXT_FADE_IN_MS + POST_TEXT_HOLD_MS;
+        const waitMs = Math.max(0, earliestTransitionAt - now);
         scheduleSceneTwoTransition(waitMs);
       };
 
@@ -267,7 +310,10 @@
       activateScene(firstSceneId, { force: true });
       window.addEventListener("scroll", requestCinematicUpdate, { passive: true });
       window.addEventListener("resize", requestCinematicUpdate);
-      window.addEventListener("pagehide", clearPendingTransition);
+      window.addEventListener("pagehide", () => {
+        clearPendingTransition();
+        clearSceneOneTextReveal();
+      });
       requestCinematicUpdate();
     }
   }
