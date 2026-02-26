@@ -1244,6 +1244,72 @@ textarea {
   }
 }
 
+#story.cinematic {
+  position: relative;
+  margin: 0 auto;
+  width: min(100%, 1200px);
+  display: block;
+  min-height: 0;
+  padding-bottom: 0;
+}
+
+#story .cinematic__media {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  max-height: 92vh;
+  position: sticky;
+  top: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#story .cinematic__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center center;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+#story .cinematic__img.is-active {
+  opacity: 1;
+}
+
+#story .cinematic__copy {
+  position: sticky;
+  top: 80px;
+  z-index: 4;
+  margin-top: 16px;
+  padding-inline: 12px;
+  pointer-events: none;
+}
+
+#story .cinematic__block {
+  display: none;
+  position: relative;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  min-height: 0;
+  max-width: min(760px, 100%);
+  margin: 0 auto;
+  opacity: 1;
+  transform: none;
+}
+
+#story .cinematic__block.is-active {
+  display: block;
+}
+
+#story .cinematic__spacer {
+  height: 140vh;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -1252,10 +1318,10 @@ textarea {
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+    scroll-behavior: auto;
   }
 
   .cinematic__visual {
@@ -1264,17 +1330,17 @@ textarea {
   }
 
   .hero__bg-parallax {
-    transform: none !important;
+    transform: none;
   }
 
   .cinematic__visual {
-    transform: none !important;
+    transform: none;
   }
 
   .cinematic__img[data-scene],
   .cinematic__block[data-scene],
   .cinematic__overlay {
-    transition: none !important;
+    transition: none;
   }
 
   .reveal {

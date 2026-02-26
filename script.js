@@ -6,7 +6,6 @@
   const nav = document.querySelector("#site-nav");
   const story = document.querySelector("#story");
   const heroParallaxLayer = document.querySelector(".hero__bg-parallax");
-  const cinematicVisual = document.querySelector(".cinematic__visual");
   const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
   let reducedMotion = motionQuery.matches;
   const parallaxState = {
@@ -23,9 +22,6 @@
   const setParallaxPosition = (value) => {
     if (heroParallaxLayer) {
       heroParallaxLayer.style.transform = `translate3d(0, ${value}px, 0)`;
-    }
-    if (cinematicVisual) {
-      cinematicVisual.style.transform = `translate3d(0, ${value}px, 0)`;
     }
   };
 
@@ -227,67 +223,58 @@
   }
 
   if (story) {
-    const sceneVisual = story.querySelector(".cinematic__visual");
-    const sceneImages = Array.from(story.querySelectorAll(".cinematic__img[data-scene]"));
-    const sceneBlocks = Array.from(story.querySelectorAll(".cinematic__block[data-scene]"));
+    const sceneImages = Array.from(story.querySelectorAll(".cinematic__img"));
+    const sceneBlocks = Array.from(story.querySelectorAll(".cinematic__block"));
 
     if (sceneImages.length > 0 && sceneBlocks.length > 0) {
-      const sceneOrder = sceneBlocks.map((block) => block.dataset.scene).filter(Boolean);
-      const normalizedSceneOrder = [
-        sceneOrder[0] || "1",
-        sceneOrder[1] || sceneOrder[0] || "1",
-        sceneOrder[2] || sceneOrder[sceneOrder.length - 1] || sceneOrder[0] || "1"
-      ];
-
-      const activateScene = (sceneId) => {
-        if (sceneVisual) {
-          sceneVisual.setAttribute("data-active-scene", sceneId);
-        }
-        sceneImages.forEach((image) => {
-          image.classList.toggle("is-active", image.dataset.scene === sceneId);
+      function activateScene(id) {
+        sceneImages.forEach((img) => {
+          img.classList.toggle("is-active", img.dataset.scene == id);
         });
         sceneBlocks.forEach((block) => {
-          const active = block.dataset.scene === sceneId;
+          const active = block.dataset.scene == id;
           block.classList.toggle("is-active", active);
           block.setAttribute("aria-current", active ? "true" : "false");
         });
+      }
+
+      const getStoryProgress = () => {
+        const rect = story.getBoundingClientRect();
+        const storyTop = window.scrollY + rect.top;
+        const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+        const scrollableDistance = Math.max(1, story.offsetHeight - viewportHeight);
+        const current = window.scrollY - storyTop;
+        return Math.min(1, Math.max(0, current / scrollableDistance));
       };
 
-      const sceneByProgress = (progress) => {
-        if (progress < 1 / 3) {
-          return normalizedSceneOrder[0];
+      const updateSceneByScroll = () => {
+        const progress = getStoryProgress();
+        if (progress < 0.33) {
+          activateScene(1);
+        } else if (progress < 0.66) {
+          activateScene(2);
+        } else {
+          activateScene(3);
         }
-        if (progress < 2 / 3) {
-          return normalizedSceneOrder[1];
-        }
-        return normalizedSceneOrder[2];
       };
 
       let cinematicRafId = 0;
-      const updateCinematicByScroll = () => {
-        cinematicRafId = 0;
-        const rect = story.getBoundingClientRect();
-        const vh = window.innerHeight;
-        const storyTop = window.scrollY + rect.top;
-        const storyBottom = window.scrollY + rect.bottom;
-        const start = storyTop - vh * 0.28;
-        const end = storyBottom - vh * 0.42;
-        const span = Math.max(1, end - start);
-        const progress = Math.min(1, Math.max(0, (window.scrollY - start) / span));
-        activateScene(sceneByProgress(progress));
-      };
-
       const requestCinematicUpdate = () => {
         if (cinematicRafId) {
           return;
         }
-        cinematicRafId = window.requestAnimationFrame(updateCinematicByScroll);
+        cinematicRafId = window.requestAnimationFrame(() => {
+          cinematicRafId = 0;
+          updateSceneByScroll();
+        });
       };
 
-      activateScene(normalizedSceneOrder[0]);
+      activateScene(1);
+      requestCinematicUpdate();
+
       window.addEventListener("scroll", requestCinematicUpdate, { passive: true });
       window.addEventListener("resize", requestCinematicUpdate);
-      requestCinematicUpdate();
+      window.addEventListener("orientationchange", requestCinematicUpdate, { passive: true });
     }
   }
 
