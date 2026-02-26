@@ -4,12 +4,67 @@
   const header = document.querySelector(".site-header");
   const menuToggle = document.querySelector(".menu-toggle");
   const nav = document.querySelector("#site-nav");
+  const story = document.querySelector("#story");
+  const heroParallaxLayer = document.querySelector(".hero__bg-parallax");
+  const cinematicVisual = document.querySelector(".cinematic__visual");
   const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
   let reducedMotion = motionQuery.matches;
+  const parallaxState = {
+    current: 0,
+    target: 0,
+    rafId: 0
+  };
 
   const setHeaderOffset = () => {
     const headerHeight = header ? header.offsetHeight : 78;
     root.style.setProperty("--header-offset", `${headerHeight + 14}px`);
+  };
+
+  const setParallaxPosition = (value) => {
+    if (heroParallaxLayer) {
+      heroParallaxLayer.style.transform = `translate3d(0, ${value}px, 0)`;
+    }
+    if (cinematicVisual) {
+      cinematicVisual.style.transform = `translate3d(0, ${value}px, 0)`;
+    }
+  };
+
+  const renderParallax = () => {
+    if (reducedMotion) {
+      parallaxState.current = 0;
+      parallaxState.target = 0;
+      parallaxState.rafId = 0;
+      setParallaxPosition(0);
+      return;
+    }
+
+    parallaxState.current += (parallaxState.target - parallaxState.current) * 0.16;
+    setParallaxPosition(parallaxState.current);
+
+    if (Math.abs(parallaxState.target - parallaxState.current) > 0.04) {
+      parallaxState.rafId = window.requestAnimationFrame(renderParallax);
+    } else {
+      parallaxState.current = parallaxState.target;
+      setParallaxPosition(parallaxState.current);
+      parallaxState.rafId = 0;
+    }
+  };
+
+  const scheduleParallax = () => {
+    if (reducedMotion) {
+      if (parallaxState.rafId) {
+        window.cancelAnimationFrame(parallaxState.rafId);
+        parallaxState.rafId = 0;
+      }
+      setParallaxPosition(0);
+      return;
+    }
+
+    const maxShift = window.innerHeight * 0.02;
+    parallaxState.target = Math.min(maxShift, window.scrollY * 0.01);
+    if (!parallaxState.rafId) {
+      parallaxState.rafId = window.requestAnimationFrame(renderParallax);
+    }
   };
 
   const syncMotionPreference = (event) => {
@@ -18,7 +73,11 @@
       document.querySelectorAll(".reveal").forEach((el) => {
         el.classList.add("is-visible");
       });
+      scheduleParallax();
+      return;
     }
+
+    scheduleParallax();
   };
 
   if (typeof motionQuery.addEventListener === "function") {
@@ -29,12 +88,17 @@
 
   setHeaderOffset();
   window.addEventListener("resize", setHeaderOffset);
+  window.addEventListener("resize", scheduleParallax);
+  window.addEventListener("scroll", scheduleParallax, { passive: true });
+  scheduleParallax();
 
   const closeMenu = () => {
     if (!menuToggle || !nav) {
       return;
     }
     menuToggle.setAttribute("aria-expanded", "false");
+    menuToggle.setAttribute("aria-label", "メニューを開く");
+    menuToggle.classList.remove("is-open");
     nav.classList.remove("is-open");
     body.classList.remove("menu-open");
   };
@@ -43,11 +107,17 @@
     menuToggle.addEventListener("click", () => {
       const nextExpanded = menuToggle.getAttribute("aria-expanded") !== "true";
       menuToggle.setAttribute("aria-expanded", String(nextExpanded));
+      menuToggle.setAttribute("aria-label", nextExpanded ? "メニューを閉じる" : "メニューを開く");
+      menuToggle.classList.toggle("is-open", nextExpanded);
       nav.classList.toggle("is-open", nextExpanded);
       body.classList.toggle("menu-open", nextExpanded);
     });
 
     nav.addEventListener("click", (event) => {
+      if (event.target === nav) {
+        closeMenu();
+        return;
+      }
       const link = event.target.closest("a");
       if (link) {
         closeMenu();
@@ -82,7 +152,14 @@
     } else if (typeof desktopQuery.addListener === "function") {
       desktopQuery.addListener(onDesktop);
     }
+
+    // iOSのページ復帰・再読込で状態が残るケースを防ぐ
+    window.addEventListener("pageshow", () => {
+      closeMenu();
+    });
   }
+
+  closeMenu();
 
   const scrollToAnchor = (id) => {
     if (!id || id === "#") {
@@ -139,85 +216,23 @@
     });
   }
 
-  const story = document.querySelector("#story");
   if (story) {
+    const sceneVisual = story.querySelector(".cinematic__visual");
     const sceneImages = Array.from(story.querySelectorAll(".cinematic__img[data-scene]"));
     const sceneBlocks = Array.from(story.querySelectorAll(".cinematic__block[data-scene]"));
 
     if (sceneImages.length > 0 && sceneBlocks.length > 0) {
-      const sceneVisual = story.querySelector(".cinematic__visual");
-      const sceneIds = sceneBlocks
-        .map((block) => block.dataset.scene)
-        .filter(Boolean);
-      const firstSceneId = sceneIds[0] || "1";
-      const secondSceneId = sceneIds[1] || firstSceneId;
+      const sceneOrder = sceneBlocks.map((block) => block.dataset.scene).filter(Boolean);
+      const normalizedSceneOrder = [
+        sceneOrder[0] || "1",
+        sceneOrder[1] || sceneOrder[0] || "1",
+        sceneOrder[2] || sceneOrder[sceneOrder.length - 1] || sceneOrder[0] || "1"
+      ];
 
-      const SCENE_ONE_TRANSITION_PROGRESS = 0.62;
-      const SCENE_ONE_TEXT_DELAY_MS = 2000;
-      const TEXT_FADE_IN_MS = 1000;
-      const POST_TEXT_HOLD_MS = 1200;
-
-      let activeSceneId = firstSceneId;
-      let sceneOneActivatedAt = window.performance.now();
-      let storyEntered = false;
-      let pendingSceneId = "";
-      let pendingTimer = 0;
-      let sceneOneTextTimer = 0;
-      let cinematicRafId = 0;
-      let sceneOneCopyVisible = false;
-
-      const clearPendingTransition = () => {
-        if (pendingTimer) {
-          window.clearTimeout(pendingTimer);
-          pendingTimer = 0;
-        }
-        pendingSceneId = "";
-      };
-
-      const clearSceneOneTextReveal = () => {
-        if (sceneOneTextTimer) {
-          window.clearTimeout(sceneOneTextTimer);
-          sceneOneTextTimer = 0;
-        }
-      };
-
-      const syncCopyVisibility = () => {
-        sceneBlocks.forEach((block) => {
-          const isActive = block.dataset.scene === activeSceneId;
-          const isSceneOne = block.dataset.scene === firstSceneId;
-          const visible = isActive && (!isSceneOne || sceneOneCopyVisible);
-          block.classList.toggle("is-copy-visible", visible);
-        });
-      };
-
-      const scheduleSceneOneTextReveal = () => {
-        clearSceneOneTextReveal();
-        if (activeSceneId !== firstSceneId) {
-          return;
-        }
-        sceneOneCopyVisible = false;
-        syncCopyVisibility();
-        sceneOneTextTimer = window.setTimeout(() => {
-          sceneOneTextTimer = 0;
-          if (activeSceneId !== firstSceneId) {
-            return;
-          }
-          sceneOneCopyVisible = true;
-          syncCopyVisibility();
-        }, SCENE_ONE_TEXT_DELAY_MS);
-      };
-
-      const activateScene = (sceneId, options = {}) => {
-        const force = Boolean(options.force);
-        if (!sceneId || (!force && sceneId === activeSceneId)) {
-          return;
-        }
-
-        activeSceneId = sceneId;
+      const activateScene = (sceneId) => {
         if (sceneVisual) {
           sceneVisual.setAttribute("data-active-scene", sceneId);
         }
-
         sceneImages.forEach((image) => {
           image.classList.toggle("is-active", image.dataset.scene === sceneId);
         });
@@ -226,94 +241,42 @@
           block.classList.toggle("is-active", active);
           block.setAttribute("aria-current", active ? "true" : "false");
         });
-
-        if (sceneId === firstSceneId) {
-          sceneOneActivatedAt = window.performance.now();
-          scheduleSceneOneTextReveal();
-          return;
-        }
-
-        sceneOneCopyVisible = false;
-        clearSceneOneTextReveal();
-        syncCopyVisibility();
       };
 
-      const getStoryProgress = () => {
+      const sceneByProgress = (progress) => {
+        if (progress < 1 / 3) {
+          return normalizedSceneOrder[0];
+        }
+        if (progress < 2 / 3) {
+          return normalizedSceneOrder[1];
+        }
+        return normalizedSceneOrder[2];
+      };
+
+      let cinematicRafId = 0;
+      const updateCinematicByScroll = () => {
+        cinematicRafId = 0;
         const rect = story.getBoundingClientRect();
-        const viewportHeight = window.innerHeight || 1;
+        const vh = window.innerHeight;
         const storyTop = window.scrollY + rect.top;
         const storyBottom = window.scrollY + rect.bottom;
-        const start = storyTop - viewportHeight * 0.26;
-        const end = storyBottom - viewportHeight * 0.56;
+        const start = storyTop - vh * 0.28;
+        const end = storyBottom - vh * 0.42;
         const span = Math.max(1, end - start);
-        return Math.min(1, Math.max(0, (window.scrollY - start) / span));
-      };
-
-      const scheduleSceneTwoTransition = (delayMs) => {
-        if (delayMs <= 0) {
-          clearPendingTransition();
-          activateScene(secondSceneId);
-          return;
-        }
-
-        if (pendingSceneId === secondSceneId && pendingTimer) {
-          return;
-        }
-
-        clearPendingTransition();
-        pendingSceneId = secondSceneId;
-        pendingTimer = window.setTimeout(() => {
-          pendingTimer = 0;
-          pendingSceneId = "";
-          activateScene(secondSceneId);
-        }, delayMs);
-      };
-
-      const updateCinematicByScroll = () => {
-        const progress = getStoryProgress();
-
-        if (!storyEntered && progress > 0) {
-          storyEntered = true;
-          if (activeSceneId === firstSceneId) {
-            sceneOneActivatedAt = window.performance.now();
-            scheduleSceneOneTextReveal();
-          }
-        }
-
-        const wantsSecondScene = secondSceneId !== firstSceneId && progress >= SCENE_ONE_TRANSITION_PROGRESS;
-        if (!wantsSecondScene) {
-          clearPendingTransition();
-          activateScene(firstSceneId);
-          return;
-        }
-
-        if (activeSceneId === secondSceneId) {
-          return;
-        }
-
-        const now = window.performance.now();
-        const earliestTransitionAt = sceneOneActivatedAt + SCENE_ONE_TEXT_DELAY_MS + TEXT_FADE_IN_MS + POST_TEXT_HOLD_MS;
-        const waitMs = Math.max(0, earliestTransitionAt - now);
-        scheduleSceneTwoTransition(waitMs);
+        const progress = Math.min(1, Math.max(0, (window.scrollY - start) / span));
+        activateScene(sceneByProgress(progress));
       };
 
       const requestCinematicUpdate = () => {
         if (cinematicRafId) {
           return;
         }
-        cinematicRafId = window.requestAnimationFrame(() => {
-          cinematicRafId = 0;
-          updateCinematicByScroll();
-        });
+        cinematicRafId = window.requestAnimationFrame(updateCinematicByScroll);
       };
 
-      activateScene(firstSceneId, { force: true });
+      activateScene(normalizedSceneOrder[0]);
       window.addEventListener("scroll", requestCinematicUpdate, { passive: true });
       window.addEventListener("resize", requestCinematicUpdate);
-      window.addEventListener("pagehide", () => {
-        clearPendingTransition();
-        clearSceneOneTextReveal();
-      });
       requestCinematicUpdate();
     }
   }

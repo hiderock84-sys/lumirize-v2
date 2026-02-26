@@ -21,7 +21,7 @@
     content="住まいを先に整えることが、回復と社会復帰の土台になる。株式会社ルミライズの支援情報と無料相談窓口。"
   />
   <meta property="og:url" content="https://lumirize.com/" />
-  <meta property="og:image" content="https://lumirize.com/scene_key.jpg" />
+  <meta property="og:image" content="https://lumirize.com/hero.jpg" />
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="株式会社ルミライズ | Housing Firstで再出発を支える住まいの基盤" />
@@ -29,7 +29,7 @@
     name="twitter:description"
     content="住まいを先に整えるHousing Firstで、再出発の土台を支えるルミライズ。"
   />
-  <meta name="twitter:image" content="https://lumirize.com/scene_key.jpg" />
+  <meta name="twitter:image" content="https://lumirize.com/hero.jpg" />
 
   <link rel="stylesheet" href="styles.css" />
 
@@ -41,7 +41,7 @@
       "alternateName": "LUMIRIZE Inc.",
       "url": "https://lumirize.com/",
       "logo": "https://lumirize.com/logo-mark.png",
-      "image": "https://lumirize.com/scene_key.jpg",
+      "image": "https://lumirize.com/hero.jpg",
       "foundingDate": "2021-08-24",
       "founder": {
         "@type": "Person",
@@ -64,10 +64,11 @@
 </head>
 <body>
   <a class="skip-link" href="#main">本文へスキップ</a>
+  <div id="start-top" class="start-top-anchor" aria-hidden="true"></div>
 
   <header class="site-header" id="top">
     <div class="container header__inner">
-      <a class="brand" href="#top" aria-label="株式会社ルミライズ トップへ">
+      <a class="brand" href="#start-top" aria-label="株式会社ルミライズ ページ最上部へ">
         <img src="logo-horizontal.png" alt="株式会社ルミライズ" width="224" height="46" />
       </a>
 
@@ -84,25 +85,62 @@
       </button>
 
       <nav class="site-nav" id="site-nav" aria-label="グローバルメニュー">
-        <a href="#story">ストーリー</a>
-        <a href="#services">支援内容</a>
-        <a href="#about">会社概要</a>
-        <a class="site-nav__cta" href="#contact">無料相談</a>
-        <a class="site-nav__tel" href="tel:0427048308">TEL 042-704-8308</a>
+        <div class="site-nav__panel">
+          <p class="site-nav__eyebrow">SESSION LINKS</p>
+          <a class="site-nav__link" href="#start-top">
+            <span>トップ</span>
+            <small>Start Top</small>
+          </a>
+          <a class="site-nav__link" href="#story">
+            <span>ストーリー</span>
+            <small>Emotion</small>
+          </a>
+          <a class="site-nav__link" href="#services">
+            <span>問題提起</span>
+            <small>Problem Statement</small>
+          </a>
+          <a class="site-nav__link" href="#impact">
+            <span>Housing First</span>
+            <small>Framework</small>
+          </a>
+          <a class="site-nav__link" href="#support">
+            <span>実績</span>
+            <small>Outcomes</small>
+          </a>
+          <a class="site-nav__link" href="#process">
+            <span>行動CTA</span>
+            <small>Action</small>
+          </a>
+          <a class="site-nav__link" href="#faq">
+            <span>FAQ</span>
+            <small>Questions</small>
+          </a>
+          <a class="site-nav__link" href="#about">
+            <span>会社概要</span>
+            <small>Company</small>
+          </a>
+          <div class="site-nav__actions">
+            <a class="site-nav__cta" href="#contact">無料相談</a>
+            <a class="site-nav__tel" href="tel:0427048308">TEL 042-704-8308</a>
+          </div>
+        </div>
       </nav>
     </div>
   </header>
 
   <main id="main">
     <section class="hero section">
+      <div class="hero__bg-parallax" aria-hidden="true"></div>
       <div class="container hero__grid">
         <div class="hero__copy reveal">
           <p class="eyebrow">HOUSING FIRST / LUMIRIZE</p>
-          <h1>住まいを先に整え、<br />再出発を現実にする。</h1>
-          <p>
-            帰る場所がない状況で「立ち直り」を求めるのではなく、
-            まず生活基盤となる住まいを整える。
-            ルミライズは、その最初の一歩を実務で支える会社です。
+          <h1 class="hero__title">
+            <span class="hero__line">人生は、</span>
+            <span class="hero__line">やり直せる。</span>
+          </h1>
+          <p class="hero__subtitle">
+            住まいから設計する、<br />
+            新基準の支援。
           </p>
           <div class="cta-row">
             <a class="btn btn--primary" href="#contact">無料相談（#contact）</a>
@@ -111,7 +149,7 @@
         </div>
 
         <figure class="hero__visual reveal">
-          <img src="scene_key.jpg" alt="新しい住まいの鍵を受け取る場面" />
+          <img src="hero.jpg" alt="朝の光の中で静かに未来を見つめる場面" />
           <figcaption>住まいが決まると、次の選択肢が生まれる。</figcaption>
         </figure>
       </div>
@@ -120,89 +158,279 @@
     <section id="story" class="section section--story" aria-labelledby="story-title">
       <div class="container">
         <header class="section-head reveal">
-          <p class="eyebrow">CINEMATIC SCROLL</p>
-          <h2 id="story-title">門を出る瞬間から、鍵を受け取る瞬間へ。</h2>
-          <p>
-            スクロールに合わせて scene1 から scene2 へ切り替わります。
-            テキストレイヤーは常に前面に固定し、読みやすさを守ります。
-          </p>
+          <p class="eyebrow">CINEMATIC EXPERIENCE</p>
+          <h2 id="story-title">感情 → 支援 → 再起 → 尊厳</h2>
         </header>
 
         <div class="cinematic">
-          <div class="cinematic__visual" aria-hidden="true">
+          <div class="cinematic__visual cinematic__media" data-active-scene="1" aria-hidden="true">
             <img
-              class="cinematic__img is-active"
+              class="cinematic__img cinematic__img--past is-active"
               data-scene="1"
-              src="scene_gate.jpg"
+              src="scene1.jpg"
               alt=""
               loading="eager"
             />
             <img
-              class="cinematic__img"
+              class="cinematic__img cinematic__img--support"
               data-scene="2"
-              src="scene_key.jpg"
+              src="scene2.jpg"
               alt=""
-              loading="lazy"
+              loading="eager"
+            />
+            <img
+              class="cinematic__img cinematic__img--future"
+              data-scene="3"
+              src="scene3.jpg"
+              alt=""
+              loading="eager"
             />
             <div class="cinematic__overlay"></div>
           </div>
 
           <div class="cinematic__content">
-            <article class="cinematic__block is-active" data-scene="1" aria-current="true">
-              <p class="scene-index">SCENE 01</p>
-              <h3>その日いちばんの不安は、今夜どこで眠るか。</h3>
-              <p>
-                出所直後や回復初期は、住まいがないだけで就労・医療・手続きのすべてが不安定になります。
-                ルミライズは、孤立を深める前に居住の土台をつくることを優先します。
-              </p>
+            <article class="cinematic__block cinematic__block--past is-active" data-scene="1" aria-current="true">
+              <p class="scene-index">SCENE 01 / 夜</p>
+              <p class="cinematic__line">出所の日、<br />いちばん怖かったのは、<br />「帰る場所がない」という現実だった。</p>
+              <p class="cinematic__line cinematic__line--sub">街は静かで、<br />自分だけが取り残されたように感じた。</p>
             </article>
 
-            <article class="cinematic__block" data-scene="2" aria-current="false">
-              <p class="scene-index">SCENE 02</p>
-              <h3>鍵を受け取った瞬間、支援は「理想」から「実行」へ。</h3>
-              <p>
-                住環境が整えば、回復支援・生活再建・関係機関連携が具体的に動きます。
-                「明日をどうするか」を、相談者と一緒に設計できる状態をつくります。
-              </p>
-              <div class="cta-row">
-                <a class="btn btn--primary" href="#contact">無料相談へ進む</a>
-                <a class="btn btn--ghost" href="tel:0427048308">電話で相談する</a>
-              </div>
+            <article class="cinematic__block cinematic__block--support" data-scene="2" aria-current="false">
+              <p class="scene-index">SCENE 02 / 支援</p>
+              <p class="cinematic__line">ルミライズから差し出されたのは、<br />説教でも、励ましでもない。</p>
+              <p class="cinematic__line cinematic__line--sub">鍵だった。</p>
+              <p class="cinematic__line cinematic__line--sub">支援は、<br />“住まい”から設計する。</p>
+            </article>
+
+            <article class="cinematic__block cinematic__block--future" data-scene="3" aria-current="false">
+              <p class="scene-index">SCENE 03 / 朝</p>
+              <p class="cinematic__line">光は、外から差すのではない。<br />住まいが整った瞬間、内側から灯る。</p>
+              <p class="cinematic__line cinematic__line--sub">ここから、人生は再起動する。</p>
             </article>
           </div>
         </div>
       </div>
     </section>
 
+    <section class="brand-thesis" aria-label="思想">
+      <div class="brand-thesis__inner reveal">
+        <p class="brand-thesis__lead">住まいがないことは、努力不足ではない。</p>
+      </div>
+    </section>
+
     <section id="services" class="section">
       <div class="container">
         <header class="section-head reveal">
-          <p class="eyebrow">SERVICE DESIGN</p>
-          <h2>再出発を止めないための支援設計</h2>
+          <p class="eyebrow">PROBLEM STATEMENT</p>
+          <h2>問題提起：個人責任論では、再出発は設計できない。</h2>
         </header>
 
         <div class="cards">
           <article class="card reveal">
-            <h3>住まいの確保を最優先</h3>
+            <h3>住まいの空白は、判断力を奪う</h3>
             <p>
-              Housing Firstに基づき、回復・更生の前提として居住を整備。
-              住居の空白期間を短くし、生活崩壊の連鎖を断ちます。
+              住所がない状態では、就労・通院・行政手続きのすべてが不安定になります。
+              生活を立て直す以前に、毎日の意思決定が崩れていきます。
             </p>
           </article>
           <article class="card reveal">
-            <h3>実務に強い伴走支援</h3>
+            <h3>孤立は、支援へアクセスする力を削る</h3>
             <p>
-              申請、契約、初期生活の調整まで、現場で必要な実務を可視化。
-              相談者ごとの状況に合わせて支援導線を組み立てます。
+              不安や偏見の中で支援窓口に到達できず、問題が深刻化するケースは少なくありません。
+              まずは相談できる状態をつくる設計が必要です。
             </p>
           </article>
           <article class="card reveal">
-            <h3>連携前提のオペレーション</h3>
+            <h3>制度は存在しても、現場でつながらない</h3>
             <p>
-              医療・福祉・就労・司法との接続を前提に、単発で終わらない支援体制を構築。
-              住まいを起点に中長期の安定を目指します。
+              制度があっても、申請・連携・生活実装が分断されると再出発は止まります。
+              問題は「制度の有無」ではなく「つながる運用」の欠如です。
             </p>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="impact" class="section section--muted">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="eyebrow">HOUSING FIRST</p>
+          <h2>Housing Firstを、現場で機能する形にする</h2>
+          <p>
+            「まず住まい」を理念で終わらせないために、ルミライズは運用を4つの軸で設計します。
+          </p>
+        </header>
+
+        <div class="kpi-grid">
+          <article class="card kpi-card reveal">
+            <p class="kpi-label">軸 01</p>
+            <p class="kpi-value">住まいを入口に固定する</p>
+            <p class="kpi-note">回復や就労の前提として、居住の確保を最優先で実行します。</p>
+          </article>
+          <article class="card kpi-card reveal">
+            <p class="kpi-label">軸 02</p>
+            <p class="kpi-value">相談継続を仕組みにする</p>
+            <p class="kpi-note">入居後も面談とフォローを継続し、孤立の再発を防ぎます。</p>
+          </article>
+          <article class="card kpi-card reveal">
+            <p class="kpi-label">軸 03</p>
+            <p class="kpi-value">関係機関連携を前提化する</p>
+            <p class="kpi-note">医療・福祉・就労・司法の連携を、日常運用に組み込みます。</p>
+          </article>
+        </div>
+
+        <article class="card comparison reveal">
+          <h3>Housing First運用の比較視点</h3>
+          <div class="table-wrap" role="region" aria-label="支援比較表">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">項目</th>
+                  <th scope="col">一般的な運用</th>
+                  <th scope="col">Housing First運用（ルミライズ）</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">入居相談</th>
+                  <td>条件中心の判断</td>
+                  <td>背景・事情を含めた個別相談</td>
+                </tr>
+                <tr>
+                  <th scope="row">生活立ち上げ</th>
+                  <td>原則自己対応</td>
+                  <td>手続き・生活動線を伴走支援</td>
+                </tr>
+                <tr>
+                  <th scope="row">連携体制</th>
+                  <td>限定的</td>
+                  <td>医療・福祉・就労・司法と接続</td>
+                </tr>
+                <tr>
+                  <th scope="row">入居後フォロー</th>
+                  <td>限定的</td>
+                  <td>再調整を前提に継続支援</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="small-note">※公開時の定量値は、母数と集計期間を明示して掲載してください。</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="support" class="section">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="eyebrow">OUTCOMES</p>
+          <h2>実績：再出発が「続く状態」を積み上げる</h2>
+        </header>
+
+        <div class="support-grid">
+          <article class="card support-item reveal">
+            <h3>相談から入居までのリードタイム短縮</h3>
+            <p>初期相談から居住確保までの意思決定を高速化し、空白期間を最小化しています。</p>
+          </article>
+          <article class="card support-item reveal">
+            <h3>入居後フォローの継続率向上</h3>
+            <p>面談・連絡・連携を継続し、孤立再発を防ぐ運用の定着を進めています。</p>
+          </article>
+          <article class="card support-item reveal">
+            <h3>関係機関連携の実行性向上</h3>
+            <p>医療・福祉・就労・司法との接続をケースごとに設計し、分断を減らしています。</p>
+          </article>
+          <article class="card support-item reveal">
+            <h3>再調整による居住継続の実現</h3>
+            <p>課題再燃時にも住まいを失わない調整手順を運用し、生活の連続性を守っています。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="process" class="section section--muted">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="eyebrow">ACTION CTA</p>
+          <h2>行動CTA：次の一歩は、今ここで決められる。</h2>
+          <p>相談は準備が整ってからではなく、状況が不安定な今こそ価値があります。</p>
+        </header>
+
+        <ol class="process-list">
+          <li class="process-item reveal">
+            <div class="process-num">01</div>
+            <div class="process-body">
+              <h3>初回相談（無料）</h3>
+              <p>電話・メール・フォームで受付。匿名の相談入口としても利用可能です。</p>
+            </div>
+          </li>
+          <li class="process-item reveal">
+            <div class="process-num">02</div>
+            <div class="process-body">
+              <h3>状況整理と必要手続きの確認</h3>
+              <p>現在地を整理し、入居に向けた優先順位と必要書類を明確化します。</p>
+            </div>
+          </li>
+          <li class="process-item reveal">
+            <div class="process-num">03</div>
+            <div class="process-body">
+              <h3>物件・居住形態の提案</h3>
+              <p>生活状況と支援体制を踏まえ、現実的に継続しやすい住まいを提案します。</p>
+            </div>
+          </li>
+          <li class="process-item reveal">
+            <div class="process-num">04</div>
+            <div class="process-body">
+              <h3>契約・入居準備</h3>
+              <p>契約実務、関係機関連携、初期生活の導線設計を並行して進めます。</p>
+            </div>
+          </li>
+          <li class="process-item reveal">
+            <div class="process-num">05</div>
+            <div class="process-body">
+              <h3>入居後フォロー</h3>
+              <p>生活の立ち上がりを確認し、就労・医療・福祉の継続支援へつなげます。</p>
+            </div>
+          </li>
+        </ol>
+
+        <div class="card process-cta reveal">
+          <div>
+            <h3>最初の一歩は「相談する」だけで大丈夫です。</h3>
+            <p>状況が整理できていなくても問題ありません。今の課題から一緒に整えます。</p>
+          </div>
+          <div class="cta-row">
+            <a class="btn btn--primary" href="#contact">無料相談へ進む</a>
+            <a class="btn btn--ghost" href="tel:0427048308">電話で相談する</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="section">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="eyebrow">FAQ</p>
+          <h2>よくある質問</h2>
+          <p>相談前に多くいただく質問をまとめています。詳細は個別相談でご案内します。</p>
+        </header>
+
+        <div class="faq-list">
+          <details class="faq-item reveal">
+            <summary>保証人がいない場合でも相談できますか？</summary>
+            <p>可能です。現状を確認したうえで、必要な手続きや代替手段を一緒に整理します。</p>
+          </details>
+          <details class="faq-item reveal">
+            <summary>出所直後で手続きが不安です。どこから始めればよいですか？</summary>
+            <p>まずはご連絡ください。生活上の緊急度を確認し、住まい確保を優先して進めます。</p>
+          </details>
+          <details class="faq-item reveal">
+            <summary>相談だけでも利用できますか？</summary>
+            <p>はい。入居を前提にしない相談でも問題ありません。状況整理だけでもご利用いただけます。</p>
+          </details>
+          <details class="faq-item reveal">
+            <summary>プライバシーは守られますか？</summary>
+            <p>相談情報は厳重に管理し、支援上必要な範囲を除いて第三者へ開示しません。</p>
+          </details>
         </div>
       </div>
     </section>
@@ -281,6 +509,16 @@
               <button class="btn btn--primary" type="submit">メール作成画面を開く</button>
             </form>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-copy section" aria-label="ラストコピー">
+      <div class="container">
+        <div class="final-copy__inner reveal">
+          <p class="final-copy__line">立ち直れ、ではなく。<br />戻れる場所を。</p>
+          <p class="final-copy__line">人としての尊厳を。</p>
+          <p class="final-copy__en">TRANSFORM SUPPORT, ILLUMINATE LIVES</p>
         </div>
       </div>
     </section>
