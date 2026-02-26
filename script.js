@@ -5,6 +5,7 @@
   const menuToggle = document.querySelector(".menu-toggle");
   const nav = document.querySelector("#site-nav");
   const story = document.querySelector("#story");
+  const rawToggle = document.querySelector("#raw-toggle");
   const heroParallaxLayer = document.querySelector(".hero__bg-parallax");
   const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
   let reducedMotion = motionQuery.matches;
@@ -87,6 +88,24 @@
   if (window.visualViewport) {
     window.visualViewport.addEventListener("resize", setHeaderOffset);
   }
+
+  const syncRawMode = (enabled) => {
+    body.classList.toggle("is-raw", enabled);
+    if (!rawToggle) {
+      return;
+    }
+    rawToggle.classList.toggle("is-active", enabled);
+    rawToggle.setAttribute("aria-pressed", String(enabled));
+  };
+
+  if (rawToggle) {
+    syncRawMode(false);
+    rawToggle.addEventListener("click", () => {
+      const nextMode = !body.classList.contains("is-raw");
+      syncRawMode(nextMode);
+    });
+  }
+
   window.addEventListener("resize", scheduleParallax);
   window.addEventListener("scroll", scheduleParallax, { passive: true });
   scheduleParallax();
@@ -227,12 +246,20 @@
     const sceneBlocks = Array.from(story.querySelectorAll(".cinematic__block"));
 
     if (sceneImages.length > 0 && sceneBlocks.length > 0) {
-      function activateScene(id) {
+      let activeSceneId = "";
+
+      function activateScene(id, force = false) {
+        const nextSceneId = String(id);
+        if (!force && activeSceneId === nextSceneId) {
+          return;
+        }
+        activeSceneId = nextSceneId;
+
         sceneImages.forEach((img) => {
-          img.classList.toggle("is-active", img.dataset.scene == id);
+          img.classList.toggle("is-active", img.dataset.scene === nextSceneId);
         });
         sceneBlocks.forEach((block) => {
-          const active = block.dataset.scene == id;
+          const active = block.dataset.scene === nextSceneId;
           block.classList.toggle("is-active", active);
           block.setAttribute("aria-current", active ? "true" : "false");
         });
@@ -259,22 +286,31 @@
       };
 
       let cinematicRafId = 0;
-      const requestCinematicUpdate = () => {
+      let cinematicNeedsUpdate = false;
+
+      const runCinematicFrame = () => {
+        cinematicRafId = 0;
+        if (!cinematicNeedsUpdate) {
+          return;
+        }
+        cinematicNeedsUpdate = false;
+        updateSceneByScroll();
+      };
+
+      const markCinematicDirty = () => {
+        cinematicNeedsUpdate = true;
         if (cinematicRafId) {
           return;
         }
-        cinematicRafId = window.requestAnimationFrame(() => {
-          cinematicRafId = 0;
-          updateSceneByScroll();
-        });
+        cinematicRafId = window.requestAnimationFrame(runCinematicFrame);
       };
 
-      activateScene(1);
-      requestCinematicUpdate();
+      activateScene(1, true);
+      markCinematicDirty();
 
-      window.addEventListener("scroll", requestCinematicUpdate, { passive: true });
-      window.addEventListener("resize", requestCinematicUpdate);
-      window.addEventListener("orientationchange", requestCinematicUpdate, { passive: true });
+      window.addEventListener("scroll", markCinematicDirty, { passive: true });
+      window.addEventListener("resize", markCinematicDirty);
+      window.addEventListener("orientationchange", markCinematicDirty, { passive: true });
     }
   }
 
