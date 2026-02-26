@@ -145,7 +145,43 @@
     const sceneBlocks = Array.from(story.querySelectorAll(".cinematic__block[data-scene]"));
 
     if (sceneImages.length > 0 && sceneBlocks.length > 0) {
-      const activateScene = (sceneId) => {
+      const sceneVisual = story.querySelector(".cinematic__visual");
+      const sceneIds = sceneBlocks
+        .map((block) => block.dataset.scene)
+        .filter(Boolean);
+      const firstSceneId = sceneIds[0] || "1";
+      const secondSceneId = sceneIds[1] || firstSceneId;
+
+      const SCENE_ONE_TRANSITION_PROGRESS = 0.58;
+      const TEXT_FADE_IN_MS = 800;
+      const POST_TEXT_HOLD_MS = 1000;
+
+      let activeSceneId = firstSceneId;
+      let sceneOneActivatedAt = window.performance.now();
+      let storyEntered = false;
+      let pendingSceneId = "";
+      let pendingTimer = 0;
+      let cinematicRafId = 0;
+
+      const clearPendingTransition = () => {
+        if (pendingTimer) {
+          window.clearTimeout(pendingTimer);
+          pendingTimer = 0;
+        }
+        pendingSceneId = "";
+      };
+
+      const activateScene = (sceneId, options = {}) => {
+        const force = Boolean(options.force);
+        if (!sceneId || (!force && sceneId === activeSceneId)) {
+          return;
+        }
+
+        activeSceneId = sceneId;
+        if (sceneVisual) {
+          sceneVisual.setAttribute("data-active-scene", sceneId);
+        }
+
         sceneImages.forEach((image) => {
           image.classList.toggle("is-active", image.dataset.scene === sceneId);
         });
@@ -154,57 +190,85 @@
           block.classList.toggle("is-active", active);
           block.setAttribute("aria-current", active ? "true" : "false");
         });
+
+        if (sceneId === firstSceneId) {
+          sceneOneActivatedAt = window.performance.now();
+        }
       };
 
-      activateScene(sceneBlocks[0].dataset.scene || "1");
+      const getStoryProgress = () => {
+        const rect = story.getBoundingClientRect();
+        const viewportHeight = window.innerHeight || 1;
+        const storyTop = window.scrollY + rect.top;
+        const storyBottom = window.scrollY + rect.bottom;
+        const start = storyTop - viewportHeight * 0.26;
+        const end = storyBottom - viewportHeight * 0.56;
+        const span = Math.max(1, end - start);
+        return Math.min(1, Math.max(0, (window.scrollY - start) / span));
+      };
 
-      if ("IntersectionObserver" in window) {
-        const cinematicObserver = new IntersectionObserver(
-          (entries) => {
-            const visible = entries
-              .filter((entry) => entry.isIntersecting)
-              .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+      const scheduleSceneTwoTransition = (delayMs) => {
+        if (reducedMotion || delayMs <= 0) {
+          clearPendingTransition();
+          activateScene(secondSceneId);
+          return;
+        }
 
-            if (visible.length === 0) {
-              return;
-            }
+        if (pendingSceneId === secondSceneId && pendingTimer) {
+          return;
+        }
 
-            const sceneId = visible[0].target.dataset.scene;
-            if (sceneId) {
-              activateScene(sceneId);
-            }
-          },
-          {
-            root: null,
-            rootMargin: "-34% 0px -34% 0px",
-            threshold: [0.12, 0.32, 0.52, 0.72]
+        clearPendingTransition();
+        pendingSceneId = secondSceneId;
+        pendingTimer = window.setTimeout(() => {
+          pendingTimer = 0;
+          pendingSceneId = "";
+          activateScene(secondSceneId);
+        }, delayMs);
+      };
+
+      const updateCinematicByScroll = () => {
+        const progress = getStoryProgress();
+
+        if (!storyEntered && progress > 0) {
+          storyEntered = true;
+          if (activeSceneId === firstSceneId) {
+            sceneOneActivatedAt = window.performance.now();
           }
-        );
+        }
 
-        sceneBlocks.forEach((block) => cinematicObserver.observe(block));
-      } else {
-        const fallbackSwitch = () => {
-          const guideLine = window.scrollY + window.innerHeight * 0.48;
-          let nearest = sceneBlocks[0];
-          let nearestDistance = Number.POSITIVE_INFINITY;
+        const wantsSecondScene = secondSceneId !== firstSceneId && progress >= SCENE_ONE_TRANSITION_PROGRESS;
+        if (!wantsSecondScene) {
+          clearPendingTransition();
+          activateScene(firstSceneId);
+          return;
+        }
 
-          sceneBlocks.forEach((block) => {
-            const rect = block.getBoundingClientRect();
-            const center = window.scrollY + rect.top + rect.height * 0.5;
-            const distance = Math.abs(center - guideLine);
-            if (distance < nearestDistance) {
-              nearest = block;
-              nearestDistance = distance;
-            }
-          });
+        if (activeSceneId === secondSceneId) {
+          return;
+        }
 
-          const sceneId = nearest.dataset.scene || "1";
-          activateScene(sceneId);
-        };
+        const now = window.performance.now();
+        const earliestTransitionAt = sceneOneActivatedAt + TEXT_FADE_IN_MS + POST_TEXT_HOLD_MS;
+        const waitMs = reducedMotion ? 0 : Math.max(0, earliestTransitionAt - now);
+        scheduleSceneTwoTransition(waitMs);
+      };
 
-        window.addEventListener("scroll", fallbackSwitch, { passive: true });
-        fallbackSwitch();
-      }
+      const requestCinematicUpdate = () => {
+        if (cinematicRafId) {
+          return;
+        }
+        cinematicRafId = window.requestAnimationFrame(() => {
+          cinematicRafId = 0;
+          updateCinematicByScroll();
+        });
+      };
+
+      activateScene(firstSceneId, { force: true });
+      window.addEventListener("scroll", requestCinematicUpdate, { passive: true });
+      window.addEventListener("resize", requestCinematicUpdate);
+      window.addEventListener("pagehide", clearPendingTransition);
+      requestCinematicUpdate();
     }
   }
 
