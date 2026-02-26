@@ -258,11 +258,11 @@
       const scene2Id = normalizedSceneOrder[1];
       const scene3Id = normalizedSceneOrder[2];
 
-      const SCENE1_RANGE_END = 0.50;
+      const SCENE1_RANGE_END = 0.55;
       const SCENE2_RANGE_END = 0.80;
-      const S1_TO_S2 = 0.55;
+      const S1_TO_S2 = 0.60;
       const S2_TO_S1 = 0.45;
-      const S2_TO_S3 = 0.85;
+      const S2_TO_S3 = 0.88;
       const S3_TO_S2 = 0.75;
       const MIN_SCENE1_HOLD_MS = 1000;
 
