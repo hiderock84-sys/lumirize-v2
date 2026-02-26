@@ -464,7 +464,7 @@ p {
   border-top: 1px solid var(--line-soft);
   border-bottom: 1px solid var(--line-soft);
   background: rgba(238, 248, 250, 0.02);
-  padding-bottom: clamp(2.2rem, 5vw, 3.2rem);
+  padding-bottom: clamp(1.4rem, 4vw, 2.4rem);
 }
 
 .brand-thesis {
@@ -567,17 +567,17 @@ p {
 
 .cinematic__img--future {
   object-position: center center;
-  filter: none;
+  filter: brightness(1.01) contrast(1.01) saturate(0.99);
 }
 
 .cinematic__img--support {
   object-position: center center;
-  filter: none;
+  filter: brightness(1.01) contrast(1.01) saturate(1);
 }
 
 .cinematic__img--past {
   object-position: center center;
-  filter: none;
+  filter: brightness(1.05) contrast(1.05) saturate(0.96);
 }
 
 .cinematic__overlay {
@@ -1247,7 +1247,7 @@ textarea {
 
   .cinematic__img--past {
     object-position: center center;
-    filter: none;
+    filter: brightness(1.08) contrast(1.06) saturate(0.96);
   }
 
   .cinematic__img--support {

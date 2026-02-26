@@ -268,6 +268,7 @@
 
       let activeSceneId = scene1Id;
       let lastSceneActivatedAt = window.performance.now();
+      let lastProgress = -1;
 
       const activateScene = (sceneId, force = false) => {
         if (!force && sceneId === activeSceneId) {
@@ -325,6 +326,10 @@
         const end = storyBottom - vh * 0.42;
         const span = Math.max(1, end - start);
         const progress = Math.min(1, Math.max(0, (window.scrollY - start) / span));
+        if (Math.abs(progress - lastProgress) < 0.0015 && !reducedMotion) {
+          return;
+        }
+        lastProgress = progress;
 
         if (reducedMotion) {
           activateScene(sceneByProgress(progress));
