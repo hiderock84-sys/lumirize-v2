@@ -432,13 +432,13 @@
               if (entry.target !== story) {
                 return;
               }
-              setStoryVisibility(entry.isIntersecting && entry.intersectionRatio > 0.05);
+              setStoryVisibility(entry.isIntersecting && entry.intersectionRatio > 0.08);
             });
           },
           {
-            threshold: [0, 0.05, 0.2],
+            threshold: [0, 0.08, 0.24],
             root: null,
-            rootMargin: "-6% 0px -6% 0px"
+            rootMargin: "-10% 0px -10% 0px"
           }
         );
         storyObserver.observe(story);
