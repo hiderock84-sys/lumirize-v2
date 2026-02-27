@@ -866,10 +866,6 @@ p {
   height: 80vh !important;
 }
 
-.scene-marker {
-  height: 60vh;
-}
-
 .cinematic__block {
   position: absolute;
   left: 18px;

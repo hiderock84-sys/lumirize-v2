@@ -262,20 +262,45 @@
 
   if (story) {
     const sceneVisual = story.querySelector(".cinematic__visual");
-    const sceneMarkers = document.querySelectorAll(".scene-marker");
+    const sceneImages = Array.from(document.querySelectorAll(".cinematic__img"));
+    const sceneBlocks = Array.from(document.querySelectorAll(".cinematic__block"));
     let currentScene = 1;
+    let lastProgress = -1;
+    let cinematicRafId = 0;
+    let cinematicNeedsUpdate = false;
 
-    function activateScene(sceneId) {
-      if (sceneId === currentScene) {
+    const sceneByProgress = (progress) => {
+      if (progress < 0.333) {
+        return 1;
+      }
+      if (progress < 0.666) {
+        return 2;
+      }
+      return 3;
+    };
+
+    const getStoryProgress = () => {
+      const rect = story.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || 1;
+      const storyTop = window.scrollY + rect.top;
+      const storyBottom = window.scrollY + rect.bottom;
+      const start = storyTop - viewportHeight * 0.2;
+      const end = storyBottom - viewportHeight * 0.8;
+      const span = Math.max(1, end - start);
+      return Math.min(1, Math.max(0, (window.scrollY - start) / span));
+    };
+
+    function activateScene(sceneId, force = false) {
+      if (!force && sceneId === currentScene) {
         return;
       }
 
-      document.querySelectorAll(".cinematic__img").forEach((img) => {
-        img.classList.toggle("is-active", img.dataset.scene == sceneId);
+      sceneImages.forEach((img) => {
+        img.classList.toggle("is-active", Number(img.dataset.scene) === sceneId);
       });
 
-      document.querySelectorAll(".cinematic__block").forEach((block) => {
-        const active = block.dataset.scene == sceneId;
+      sceneBlocks.forEach((block) => {
+        const active = Number(block.dataset.scene) === sceneId;
         block.classList.toggle("is-active", active);
         block.setAttribute("aria-current", active ? "true" : "false");
       });
@@ -286,21 +311,48 @@
       currentScene = sceneId;
     }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const sceneId = entry.target.dataset.scene;
-            activateScene(parseInt(sceneId, 10));
-          }
-        });
-      },
-      {
-        threshold: 0.5
+    const updateSceneByProgress = () => {
+      cinematicRafId = 0;
+      if (!cinematicNeedsUpdate) {
+        return;
       }
-    );
+      cinematicNeedsUpdate = false;
 
-    sceneMarkers.forEach((marker) => observer.observe(marker));
+      const progress = getStoryProgress();
+      if (Math.abs(progress - lastProgress) < 0.005 && !reducedMotion) {
+        return;
+      }
+      lastProgress = progress;
+
+      const targetScene = sceneByProgress(progress);
+      if (Math.abs(targetScene - currentScene) > 1) {
+        const nextScene = targetScene > currentScene ? currentScene + 1 : currentScene - 1;
+        activateScene(nextScene);
+        cinematicNeedsUpdate = true;
+        if (!cinematicRafId) {
+          cinematicRafId = window.requestAnimationFrame(updateSceneByProgress);
+        }
+        return;
+      }
+      activateScene(targetScene);
+    };
+
+    const requestSceneUpdate = () => {
+      cinematicNeedsUpdate = true;
+      if (cinematicRafId) {
+        return;
+      }
+      cinematicRafId = window.requestAnimationFrame(updateSceneByProgress);
+    };
+
+    const initialScene = sceneImages.find((img) => img.classList.contains("is-active"));
+    const initialSceneId = initialScene ? Number(initialScene.dataset.scene) : 1;
+    activateScene(initialSceneId, true);
+    requestSceneUpdate();
+
+    window.addEventListener("scroll", requestSceneUpdate, { passive: true });
+    window.addEventListener("resize", requestSceneUpdate);
+    window.addEventListener("orientationchange", requestSceneUpdate, { passive: true });
   }
 
   const form = document.querySelector("#contact-form");
