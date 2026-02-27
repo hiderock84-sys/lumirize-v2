@@ -256,119 +256,51 @@
   });
 
   const revealTargets = Array.from(document.querySelectorAll(".reveal"));
-  if (!reducedMotion && "IntersectionObserver" in window) {
-    const revealObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            revealObserver.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.16 }
-    );
-    revealTargets.forEach((el) => revealObserver.observe(el));
-  } else {
-    revealTargets.forEach((el) => {
-      el.classList.add("is-visible");
-    });
-  }
+  revealTargets.forEach((el) => {
+    el.classList.add("is-visible");
+  });
 
   if (story) {
     const sceneVisual = story.querySelector(".cinematic__visual");
-    const sceneImages = Array.from(story.querySelectorAll(".cinematic__img[data-scene]"));
-    const sceneBlocks = Array.from(story.querySelectorAll(".cinematic__block[data-scene]"));
-    const sceneMarkers = Array.from(story.querySelectorAll(".scene-marker[data-scene]"));
+    const sceneMarkers = document.querySelectorAll(".scene-marker");
+    let currentScene = 1;
 
-    if (sceneImages.length > 0 && sceneBlocks.length > 0) {
-      const sceneOrder = sceneBlocks.map((block) => block.dataset.scene).filter(Boolean);
-      const normalizedSceneOrder = [
-        sceneOrder[0] || "1",
-        sceneOrder[1] || sceneOrder[0] || "1",
-        sceneOrder[2] || sceneOrder[sceneOrder.length - 1] || sceneOrder[0] || "1"
-      ];
-      const scene1Id = normalizedSceneOrder[0];
-      const DEBUG_SCENE_LOG = false;
-
-      let currentScene = scene1Id;
-
-      const activateScene = (sceneId, force = false) => {
-        if (!force && sceneId === currentScene) {
-          return;
-        }
-        currentScene = sceneId;
-        if (sceneVisual) {
-          sceneVisual.setAttribute("data-active-scene", sceneId);
-        }
-        sceneImages.forEach((image) => {
-          image.classList.toggle("is-active", image.dataset.scene === sceneId);
-        });
-        sceneBlocks.forEach((block) => {
-          const active = block.dataset.scene === sceneId;
-          block.classList.toggle("is-active", active);
-          block.setAttribute("aria-current", active ? "true" : "false");
-        });
-        if (DEBUG_SCENE_LOG) {
-          console.log(`currentScene=${sceneId}`);
-        }
-      };
-
-      activateScene(scene1Id, true);
-
-      if (sceneMarkers.length > 0 && "IntersectionObserver" in window) {
-        const markerRatios = new Map(sceneMarkers.map((marker) => [marker, 0]));
-        let markerRafId = 0;
-
-        const applyMarkerScene = () => {
-          markerRafId = 0;
-          let topMarker = null;
-          let topRatio = 0;
-
-          markerRatios.forEach((ratio, marker) => {
-            if (ratio > topRatio) {
-              topRatio = ratio;
-              topMarker = marker;
-            }
-          });
-
-          if (!topMarker || topRatio <= 0) {
-            return;
-          }
-          const sceneId = topMarker.getAttribute("data-scene");
-          if (!sceneId || sceneId === currentScene) {
-            return;
-          }
-          activateScene(sceneId);
-        };
-
-        const requestMarkerSceneApply = () => {
-          if (markerRafId) {
-            return;
-          }
-          markerRafId = window.requestAnimationFrame(applyMarkerScene);
-        };
-
-        const markerObserver = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (!(entry.target instanceof HTMLElement)) {
-                return;
-              }
-              markerRatios.set(entry.target, entry.isIntersecting ? entry.intersectionRatio : 0);
-            });
-            requestMarkerSceneApply();
-          },
-          {
-            root: null,
-            threshold: 0.51,
-            rootMargin: "-45% 0px -45% 0px"
-          }
-        );
-
-        sceneMarkers.forEach((marker) => markerObserver.observe(marker));
+    function activateScene(sceneId) {
+      if (sceneId === currentScene) {
+        return;
       }
+
+      document.querySelectorAll(".cinematic__img").forEach((img) => {
+        img.classList.toggle("is-active", img.dataset.scene == sceneId);
+      });
+
+      document.querySelectorAll(".cinematic__block").forEach((block) => {
+        const active = block.dataset.scene == sceneId;
+        block.classList.toggle("is-active", active);
+        block.setAttribute("aria-current", active ? "true" : "false");
+      });
+
+      if (sceneVisual) {
+        sceneVisual.setAttribute("data-active-scene", String(sceneId));
+      }
+      currentScene = sceneId;
     }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const sceneId = entry.target.dataset.scene;
+            activateScene(parseInt(sceneId, 10));
+          }
+        });
+      },
+      {
+        threshold: 0.5
+      }
+    );
+
+    sceneMarkers.forEach((marker) => observer.observe(marker));
   }
 
   const form = document.querySelector("#contact-form");
