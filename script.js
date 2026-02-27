@@ -1,21 +1,4 @@
 (() => {
-  const el = document.getElementById("debugBadge");
-  if (!el) {
-    return;
-  }
-  el.textContent = "DEBUG: script.js loaded";
-})();
-
-document.addEventListener("DOMContentLoaded", () => {
-  const el = document.getElementById("debugBadge");
-  if (!el) {
-    return;
-  }
-  const markers = document.querySelectorAll(".scene-marker");
-  el.textContent = `DEBUG: DOM ready\nmarkers=${markers.length}`;
-});
-
-(() => {
   const root = document.documentElement;
   const body = document.body;
   const header = document.querySelector(".site-header");
@@ -239,40 +222,20 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   const revealTargets = Array.from(document.querySelectorAll(".reveal"));
-  if (!reducedMotion && "IntersectionObserver" in window) {
-    const revealObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            revealObserver.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.16 }
-    );
-    revealTargets.forEach((el) => revealObserver.observe(el));
-  } else {
-    revealTargets.forEach((el) => {
-      el.classList.add("is-visible");
-    });
-  }
+  revealTargets.forEach((el) => {
+    el.classList.add("is-visible");
+  });
 
   if (story) {
-    const sceneMarkers = Array.from(story.querySelectorAll(".scene-marker"));
     const sceneImages = Array.from(story.querySelectorAll(".cinematic__img"));
     const sceneBlocks = Array.from(story.querySelectorAll(".cinematic__block"));
-    const MIN_HOLD_MS = 600;
-    const HYSTERESIS_MS = 200;
-    let currentScene = 0;
-    let lastSwitchAt = 0;
-    let pendingScene = null;
-    let pendingSince = 0;
+    let currentScene = 1;
 
     function activateScene(sceneId) {
       if (!Number.isFinite(sceneId) || sceneId === currentScene) {
-        return false;
+        return;
       }
+
       sceneImages.forEach((img) => {
         img.classList.toggle("is-active", img.dataset.scene == sceneId);
       });
@@ -281,60 +244,41 @@ document.addEventListener("DOMContentLoaded", () => {
         block.classList.toggle("is-active", active);
         block.setAttribute("aria-current", active ? "true" : "false");
       });
+
       currentScene = sceneId;
-      return true;
     }
 
-    function requestScene(sceneId) {
-      if (!Number.isFinite(sceneId) || sceneId === currentScene) {
-        pendingScene = null;
-        pendingSince = 0;
-        return;
+    function updateCinematic() {
+      const rect = story.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const total = rect.height - vh;
+      const passed = Math.min(Math.max(-rect.top, 0), total);
+      const progress = total > 0 ? passed / total : 0;
+
+      let next = 1;
+      if (progress >= 0.66) {
+        next = 3;
+      } else if (progress >= 0.33) {
+        next = 2;
       }
 
-      const now = Date.now();
-      if (now - lastSwitchAt < MIN_HOLD_MS) {
-        return;
-      }
-
-      if (pendingScene !== sceneId) {
-        pendingScene = sceneId;
-        pendingSince = now;
-        return;
-      }
-
-      if (now - pendingSince < HYSTERESIS_MS) {
-        return;
-      }
-
-      if (activateScene(sceneId)) {
-        lastSwitchAt = now;
-        pendingScene = null;
-        pendingSince = 0;
+      if (next !== currentScene) {
+        activateScene(next);
       }
     }
 
-    if (activateScene(1)) {
-      lastSwitchAt = Date.now();
+    function onScroll() {
+      window.requestAnimationFrame(updateCinematic);
     }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const sceneId = parseInt(entry.target.dataset.scene, 10);
-            console.log("observer fired", sceneId);
-            requestScene(sceneId);
-          }
-        });
-      },
-      {
-        threshold: 0.1,
-        rootMargin: "0px"
-      }
-    );
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
 
-    sceneMarkers.forEach((marker) => observer.observe(marker));
+    document.addEventListener("DOMContentLoaded", () => {
+      currentScene = 0;
+      activateScene(1);
+      updateCinematic();
+    });
   }
 
   const form = document.querySelector("#contact-form");

@@ -537,10 +537,37 @@ p {
   text-transform: uppercase;
 }
 
+.scene-04 {
+  background: #000;
+  color: #fff;
+  padding: 140px 24px;
+  text-align: left;
+}
+
+.scene-04__inner {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.scene-04 p {
+  font-size: clamp(28px, 5vw, 56px);
+  font-weight: 700;
+  margin-bottom: 24px;
+  letter-spacing: 0.04em;
+}
+
+.scene-04__sub {
+  margin-top: 40px;
+  font-size: 14px;
+  letter-spacing: 0.25em;
+  opacity: 0.7;
+}
+
 .cinematic {
   position: relative;
   display: grid;
   gap: 1rem;
+  padding-bottom: 200vh;
 }
 
 .cinematic__visual {
@@ -1334,19 +1361,6 @@ textarea {
 
 #story .cinematic__block.is-active {
   display: block;
-}
-
-#story .scene-markers {
-  grid-column: 1;
-  position: relative;
-  width: 100%;
-}
-
-#story .scene-marker {
-  height: 90vh;
-  width: 1px;
-  opacity: 0;
-  pointer-events: none;
 }
 
 #story .cinematic__spacer {
