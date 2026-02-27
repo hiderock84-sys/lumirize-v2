@@ -254,8 +254,9 @@
           "1"
       );
       let currentScene = Number.isFinite(initialScene) ? initialScene : 1;
-      let lastSwitchTime = 0;
-      const SWITCH_COOLDOWN_MS = 350;
+      let lastSwitchAt = 0;
+      const COOLDOWN = 450;
+      let hasLoggedSceneDebug = false;
 
       if (sceneVisual) {
         sceneVisual.setAttribute("data-active-scene", String(currentScene));
@@ -281,30 +282,38 @@
         currentScene = sceneId;
       }
 
-      function safeActivate(sceneId) {
-        const now = Date.now();
+      function canSwitch() {
+        return Date.now() - lastSwitchAt > COOLDOWN;
+      }
+
+      function safeActivate(sceneId, ratio) {
         if (sceneId === currentScene) {
           return;
         }
-        if (now - lastSwitchTime < SWITCH_COOLDOWN_MS) {
+        if (!canSwitch()) {
           return;
         }
         activateScene(sceneId);
-        lastSwitchTime = now;
+        lastSwitchAt = Date.now();
+        if (!hasLoggedSceneDebug) {
+          console.log("scene:", sceneId, "ratio:", ratio);
+          hasLoggedSceneDebug = true;
+        }
       }
 
       const observer = new IntersectionObserver(
         (entries) => {
-          entries.forEach((entry) => {
-            if (!entry.isIntersecting) {
-              return;
-            }
-            const sceneId = Number(entry.target.dataset.scene);
-            if (!Number.isFinite(sceneId)) {
-              return;
-            }
-            safeActivate(sceneId);
-          });
+          const best = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+          if (!best) {
+            return;
+          }
+          const sceneId = Number(best.target.dataset.scene);
+          if (!Number.isFinite(sceneId)) {
+            return;
+          }
+          safeActivate(sceneId, best.intersectionRatio);
         },
         {
           root: null,
