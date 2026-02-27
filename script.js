@@ -262,97 +262,177 @@
 
   if (story) {
     const sceneVisual = story.querySelector(".cinematic__visual");
-    const sceneImages = Array.from(document.querySelectorAll(".cinematic__img"));
-    const sceneBlocks = Array.from(document.querySelectorAll(".cinematic__block"));
-    let currentScene = 1;
-    let lastProgress = -1;
-    let cinematicRafId = 0;
-    let cinematicNeedsUpdate = false;
+    const sceneImages = Array.from(story.querySelectorAll(".cinematic__img[data-scene]"));
+    const sceneBlocks = Array.from(story.querySelectorAll(".cinematic__block[data-scene]"));
 
-    const sceneByProgress = (progress) => {
-      if (progress < 0.333) {
-        return 1;
-      }
-      if (progress < 0.666) {
-        return 2;
-      }
-      return 3;
-    };
+    if (sceneImages.length > 0 && sceneBlocks.length > 0) {
+      const sceneOrder = sceneBlocks.map((block) => block.dataset.scene).filter(Boolean);
+      const normalizedSceneOrder = [
+        sceneOrder[0] || "1",
+        sceneOrder[1] || sceneOrder[0] || "1",
+        sceneOrder[2] || sceneOrder[sceneOrder.length - 1] || sceneOrder[0] || "1"
+      ];
+      const scene1Id = normalizedSceneOrder[0];
+      const scene2Id = normalizedSceneOrder[1];
+      const scene3Id = normalizedSceneOrder[2];
 
-    const getStoryProgress = () => {
-      const rect = story.getBoundingClientRect();
-      const viewportHeight = window.innerHeight || 1;
-      const storyTop = window.scrollY + rect.top;
-      const storyBottom = window.scrollY + rect.bottom;
-      const start = storyTop - viewportHeight * 0.2;
-      const end = storyBottom - viewportHeight * 0.8;
-      const span = Math.max(1, end - start);
-      return Math.min(1, Math.max(0, (window.scrollY - start) / span));
-    };
+      const SCENE1_RANGE_END = 0.55;
+      const SCENE2_RANGE_END = 0.80;
+      const S1_TO_S2 = 0.60;
+      const S2_TO_S1 = 0.45;
+      const S2_TO_S3 = 0.88;
+      const S3_TO_S2 = 0.75;
+      const MIN_SCENE1_HOLD_MS = 1000;
+      const DEBUG_SCENE_LOG = false;
 
-    function activateScene(sceneId, force = false) {
-      if (!force && sceneId === currentScene) {
-        return;
-      }
+      let currentScene = scene1Id;
+      let lastSceneActivatedAt = window.performance.now();
+      let lastProgress = -1;
+      let storyIsVisible = false;
+      let cinematicRafId = 0;
+      let cinematicNeedsUpdate = false;
 
-      sceneImages.forEach((img) => {
-        img.classList.toggle("is-active", Number(img.dataset.scene) === sceneId);
-      });
-
-      sceneBlocks.forEach((block) => {
-        const active = Number(block.dataset.scene) === sceneId;
-        block.classList.toggle("is-active", active);
-        block.setAttribute("aria-current", active ? "true" : "false");
-      });
-
-      if (sceneVisual) {
-        sceneVisual.setAttribute("data-active-scene", String(sceneId));
-      }
-      currentScene = sceneId;
-    }
-
-    const updateSceneByProgress = () => {
-      cinematicRafId = 0;
-      if (!cinematicNeedsUpdate) {
-        return;
-      }
-      cinematicNeedsUpdate = false;
-
-      const progress = getStoryProgress();
-      if (Math.abs(progress - lastProgress) < 0.005 && !reducedMotion) {
-        return;
-      }
-      lastProgress = progress;
-
-      const targetScene = sceneByProgress(progress);
-      if (Math.abs(targetScene - currentScene) > 1) {
-        const nextScene = targetScene > currentScene ? currentScene + 1 : currentScene - 1;
-        activateScene(nextScene);
-        cinematicNeedsUpdate = true;
-        if (!cinematicRafId) {
-          cinematicRafId = window.requestAnimationFrame(updateSceneByProgress);
+      const activateScene = (sceneId, force = false) => {
+        if (!force && sceneId === currentScene) {
+          return;
         }
-        return;
+        currentScene = sceneId;
+        lastSceneActivatedAt = window.performance.now();
+        if (sceneVisual) {
+          sceneVisual.setAttribute("data-active-scene", sceneId);
+        }
+        sceneImages.forEach((image) => {
+          image.classList.toggle("is-active", image.dataset.scene === sceneId);
+        });
+        sceneBlocks.forEach((block) => {
+          const active = block.dataset.scene === sceneId;
+          block.classList.toggle("is-active", active);
+          block.setAttribute("aria-current", active ? "true" : "false");
+        });
+        if (DEBUG_SCENE_LOG) {
+          console.log(`currentScene=${sceneId}`);
+        }
+      };
+
+      const sceneByProgress = (progress) => {
+        if (progress < SCENE1_RANGE_END) {
+          return scene1Id;
+        }
+        if (progress < SCENE2_RANGE_END) {
+          return scene2Id;
+        }
+        return scene3Id;
+      };
+
+      const sceneByHysteresis = (progress) => {
+        if (currentScene === scene1Id) {
+          return progress > S1_TO_S2 ? scene2Id : scene1Id;
+        }
+        if (currentScene === scene2Id) {
+          if (progress < S2_TO_S1) {
+            return scene1Id;
+          }
+          if (progress > S2_TO_S3) {
+            return scene3Id;
+          }
+          return scene2Id;
+        }
+        return progress < S3_TO_S2 ? scene2Id : scene3Id;
+      };
+
+      const updateCinematicByScroll = () => {
+        cinematicRafId = 0;
+        if (!cinematicNeedsUpdate) {
+          return;
+        }
+        cinematicNeedsUpdate = false;
+        if (!storyIsVisible) {
+          return;
+        }
+
+        const rect = story.getBoundingClientRect();
+        const viewportHeight = window.innerHeight || 1;
+        const storyTop = window.scrollY + rect.top;
+        const storyBottom = window.scrollY + rect.bottom;
+        const start = storyTop - viewportHeight * 0.28;
+        const end = storyBottom - viewportHeight * 0.42;
+        const span = Math.max(1, end - start);
+        const progress = Math.min(1, Math.max(0, (window.scrollY - start) / span));
+        if (Math.abs(progress - lastProgress) < 0.0015 && !reducedMotion) {
+          return;
+        }
+        lastProgress = progress;
+
+        if (reducedMotion) {
+          activateScene(sceneByProgress(progress));
+          return;
+        }
+
+        const nextSceneId = sceneByHysteresis(progress);
+        if (nextSceneId === currentScene) {
+          return;
+        }
+
+        const now = window.performance.now();
+        if (
+          currentScene === scene1Id &&
+          nextSceneId === scene2Id &&
+          now - lastSceneActivatedAt < MIN_SCENE1_HOLD_MS
+        ) {
+          return;
+        }
+
+        activateScene(nextSceneId);
+      };
+
+      const requestCinematicUpdate = () => {
+        cinematicNeedsUpdate = true;
+        if (!storyIsVisible) {
+          return;
+        }
+        if (cinematicRafId) {
+          return;
+        }
+        cinematicRafId = window.requestAnimationFrame(updateCinematicByScroll);
+      };
+
+      const setStoryVisibility = (isVisible) => {
+        if (storyIsVisible === isVisible) {
+          return;
+        }
+        storyIsVisible = isVisible;
+        if (storyIsVisible) {
+          lastProgress = -1;
+          activateScene(scene1Id, true);
+          requestCinematicUpdate();
+        }
+      };
+
+      if ("IntersectionObserver" in window) {
+        const storyObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.target !== story) {
+                return;
+              }
+              setStoryVisibility(entry.isIntersecting && entry.intersectionRatio > 0.05);
+            });
+          },
+          {
+            threshold: [0, 0.05, 0.2],
+            root: null,
+            rootMargin: "-6% 0px -6% 0px"
+          }
+        );
+        storyObserver.observe(story);
+      } else {
+        setStoryVisibility(true);
       }
-      activateScene(targetScene);
-    };
 
-    const requestSceneUpdate = () => {
-      cinematicNeedsUpdate = true;
-      if (cinematicRafId) {
-        return;
-      }
-      cinematicRafId = window.requestAnimationFrame(updateSceneByProgress);
-    };
-
-    const initialScene = sceneImages.find((img) => img.classList.contains("is-active"));
-    const initialSceneId = initialScene ? Number(initialScene.dataset.scene) : 1;
-    activateScene(initialSceneId, true);
-    requestSceneUpdate();
-
-    window.addEventListener("scroll", requestSceneUpdate, { passive: true });
-    window.addEventListener("resize", requestSceneUpdate);
-    window.addEventListener("orientationchange", requestSceneUpdate, { passive: true });
+      window.addEventListener("scroll", requestCinematicUpdate, { passive: true });
+      window.addEventListener("resize", requestCinematicUpdate);
+      window.addEventListener("orientationchange", requestCinematicUpdate, { passive: true });
+    }
   }
 
   const form = document.querySelector("#contact-form");

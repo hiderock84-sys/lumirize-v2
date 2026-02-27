@@ -847,10 +847,9 @@ p {
 .cinematic__media,
 .cinematic__visual.cinematic__media {
   width: 100%;
-  aspect-ratio: auto !important;
-  height: 88vh !important;
-  max-height: 920px !important;
-  min-height: 640px !important;
+  aspect-ratio: 3 / 4;
+  height: auto !important;
+  max-height: 92vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1367,13 +1366,6 @@ textarea {
   .cinematic__content {
     height: min(92vh, 920px);
     min-height: min(92vh, 920px);
-  }
-
-  .cinematic__block[data-scene] {
-    left: 0.62rem;
-    right: 0.62rem;
-    bottom: 0.62rem;
-    padding: 0.9rem;
   }
 
   .raw-toggle {
