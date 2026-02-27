@@ -1278,6 +1278,8 @@ textarea {
   object-position: center center;
   opacity: 0;
   transition: opacity 0.5s ease;
+  will-change: opacity;
+  transform: translateZ(0);
 }
 
 #story .cinematic__img[data-scene="1"] {
@@ -1323,7 +1325,8 @@ textarea {
   background: rgba(10, 20, 25, 0.62);
   backdrop-filter: blur(10px);
   opacity: 1;
-  transform: none;
+  will-change: opacity;
+  transform: translateZ(0);
 }
 
 #story .cinematic__block.is-active {
@@ -1370,6 +1373,18 @@ textarea {
 @media (min-width: 1024px) {
   #story .cinematic__block {
     bottom: 22px;
+  }
+}
+
+@media (pointer: coarse) {
+  #story .cinematic__block,
+  #story .cinematic__block * {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  #story .cinematic__block {
+    background: rgba(10, 20, 25, 0.72) !important;
   }
 }
 

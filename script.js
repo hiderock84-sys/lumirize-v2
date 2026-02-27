@@ -255,8 +255,7 @@
       );
       let currentScene = Number.isFinite(initialScene) ? initialScene : 1;
       let lastSwitchAt = 0;
-      const COOLDOWN = 450;
-      let hasLoggedSceneDebug = false;
+      const SWITCH_COOLDOWN_MS = 550;
 
       if (sceneVisual) {
         sceneVisual.setAttribute("data-active-scene", String(currentScene));
@@ -283,10 +282,10 @@
       }
 
       function canSwitch() {
-        return Date.now() - lastSwitchAt > COOLDOWN;
+        return Date.now() - lastSwitchAt > SWITCH_COOLDOWN_MS;
       }
 
-      function safeActivate(sceneId, ratio) {
+      function safeActivate(sceneId) {
         if (sceneId === currentScene) {
           return;
         }
@@ -295,10 +294,6 @@
         }
         activateScene(sceneId);
         lastSwitchAt = Date.now();
-        if (!hasLoggedSceneDebug) {
-          console.log("scene:", sceneId, "ratio:", ratio);
-          hasLoggedSceneDebug = true;
-        }
       }
 
       const observer = new IntersectionObserver(
@@ -313,7 +308,7 @@
           if (!Number.isFinite(sceneId)) {
             return;
           }
-          safeActivate(sceneId, best.intersectionRatio);
+          safeActivate(sceneId);
         },
         {
           root: null,
