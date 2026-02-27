@@ -1343,7 +1343,7 @@ textarea {
 }
 
 #story .scene-marker {
-  height: 80vh;
+  height: 90vh;
   width: 1px;
   opacity: 0;
   pointer-events: none;
@@ -1351,7 +1351,7 @@ textarea {
 
 #story .cinematic__spacer {
   grid-column: 1;
-  height: 90vh !important;
+  height: 100vh !important;
 }
 
 #story .raw-toggle {

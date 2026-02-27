@@ -242,75 +242,39 @@
   }
 
   if (story) {
-    const sceneVisual = story.querySelector(".cinematic__media, .cinematic__visual");
-    const sceneMarkers = Array.from(story.querySelectorAll(".scene-marker[data-scene]"));
-    const sceneImages = Array.from(story.querySelectorAll(".cinematic__img"));
-    const sceneBlocks = Array.from(story.querySelectorAll(".cinematic__block"));
+    const sceneMarkers = document.querySelectorAll(".scene-marker");
+    let currentScene = 1;
 
-    if (sceneImages.length > 0 && sceneBlocks.length > 0 && sceneMarkers.length > 0) {
-      let currentScene = 0;
-      let lastSwitchAt = 0;
-      const SWITCH_COOLDOWN_MS = 550;
-
-      function activateScene(sceneId) {
-        if (sceneId === currentScene) {
-          return;
-        }
-
-        sceneImages.forEach((img) => {
-          img.classList.toggle("is-active", Number(img.dataset.scene) === sceneId);
-        });
-        sceneBlocks.forEach((block) => {
-          const active = Number(block.dataset.scene) === sceneId;
-          block.classList.toggle("is-active", active);
-          block.setAttribute("aria-current", active ? "true" : "false");
-        });
-
-        if (sceneVisual) {
-          sceneVisual.setAttribute("data-active-scene", String(sceneId));
-        }
-        currentScene = sceneId;
+    function activateScene(sceneId) {
+      if (!Number.isFinite(sceneId) || sceneId === currentScene) {
+        return;
       }
-
-      function canSwitch() {
-        return Date.now() - lastSwitchAt > SWITCH_COOLDOWN_MS;
-      }
-
-      function safeActivate(sceneId) {
-        if (sceneId === currentScene) {
-          return;
-        }
-        if (!canSwitch()) {
-          return;
-        }
-        activateScene(sceneId);
-        lastSwitchAt = Date.now();
-      }
-
-      const observer = new IntersectionObserver(
-        (entries) => {
-          const best = entries
-            .filter((entry) => entry.isIntersecting)
-            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-          if (!best) {
-            return;
-          }
-          const sceneId = Number(best.target.dataset.scene);
-          if (!Number.isFinite(sceneId)) {
-            return;
-          }
-          safeActivate(sceneId);
-        },
-        {
-          root: null,
-          threshold: 0.6,
-          rootMargin: "-40% 0px -40% 0px"
-        }
-      );
-
-      activateScene(1);
-      sceneMarkers.forEach((marker) => observer.observe(marker));
+      document.querySelectorAll(".cinematic__img").forEach((img) => {
+        img.classList.toggle("is-active", img.dataset.scene == sceneId);
+      });
+      document.querySelectorAll(".cinematic__block").forEach((block) => {
+        const active = block.dataset.scene == sceneId;
+        block.classList.toggle("is-active", active);
+        block.setAttribute("aria-current", active ? "true" : "false");
+      });
+      currentScene = sceneId;
     }
+
+    activateScene(1);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const sceneId = parseInt(entry.target.dataset.scene, 10);
+            activateScene(sceneId);
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    sceneMarkers.forEach((marker) => observer.observe(marker));
   }
 
   const form = document.querySelector("#contact-form");
