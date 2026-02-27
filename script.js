@@ -323,11 +323,15 @@ document.addEventListener("DOMContentLoaded", () => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const sceneId = parseInt(entry.target.dataset.scene, 10);
+            console.log("observer fired", sceneId);
             requestScene(sceneId);
           }
         });
       },
-      { threshold: 0.5 }
+      {
+        threshold: 0.1,
+        rootMargin: "0px"
+      }
     );
 
     sceneMarkers.forEach((marker) => observer.observe(marker));
