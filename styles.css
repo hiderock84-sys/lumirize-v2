@@ -1377,14 +1377,11 @@ textarea {
 }
 
 @media (pointer: coarse) {
-  #story .cinematic__block,
-  #story .cinematic__block * {
+  .cinematic__block {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
-  }
-
-  #story .cinematic__block {
-    background: rgba(10, 20, 25, 0.72) !important;
+    background: rgba(10, 18, 22, 0.78) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
   }
 }
 
