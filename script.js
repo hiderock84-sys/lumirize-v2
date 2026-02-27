@@ -283,6 +283,7 @@
       const S2_TO_S3 = 0.88;
       const S3_TO_S2 = 0.75;
       const MIN_SCENE1_HOLD_MS = 1000;
+      const PROGRESS_EPSILON = 0.002;
       const DEBUG_SCENE_LOG = false;
 
       let currentScene = scene1Id;
@@ -358,7 +359,7 @@
         const end = storyBottom - viewportHeight * 0.42;
         const span = Math.max(1, end - start);
         const progress = Math.min(1, Math.max(0, (window.scrollY - start) / span));
-        if (Math.abs(progress - lastProgress) < 0.0015 && !reducedMotion) {
+        if (Math.abs(progress - lastProgress) < PROGRESS_EPSILON && !reducedMotion) {
           return;
         }
         lastProgress = progress;
