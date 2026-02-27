@@ -299,7 +299,6 @@
           if (!Number.isFinite(sceneId)) {
             return;
           }
-          console.log("marker hit", sceneId);
           safeActivate(sceneId);
         },
         {
