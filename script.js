@@ -242,75 +242,78 @@
   }
 
   if (story) {
+    const sceneVisual = story.querySelector(".cinematic__media, .cinematic__visual");
+    const sceneMarkers = Array.from(story.querySelectorAll(".scene-marker[data-scene]"));
     const sceneImages = Array.from(story.querySelectorAll(".cinematic__img"));
     const sceneBlocks = Array.from(story.querySelectorAll(".cinematic__block"));
 
-    if (sceneImages.length > 0 && sceneBlocks.length > 0) {
-      let activeSceneId = "";
+    if (sceneImages.length > 0 && sceneBlocks.length > 0 && sceneMarkers.length > 0) {
+      const initialScene = Number(
+        story.querySelector(".cinematic__img.is-active")?.dataset.scene ||
+          story.querySelector(".cinematic__block.is-active")?.dataset.scene ||
+          "1"
+      );
+      let currentScene = Number.isFinite(initialScene) ? initialScene : 1;
+      let lastSwitchTime = 0;
+      const SWITCH_COOLDOWN_MS = 350;
 
-      function activateScene(id, force = false) {
-        const nextSceneId = String(id);
-        if (!force && activeSceneId === nextSceneId) {
+      if (sceneVisual) {
+        sceneVisual.setAttribute("data-active-scene", String(currentScene));
+      }
+
+      function activateScene(sceneId) {
+        if (sceneId === currentScene) {
           return;
         }
-        activeSceneId = nextSceneId;
 
         sceneImages.forEach((img) => {
-          img.classList.toggle("is-active", img.dataset.scene === nextSceneId);
+          img.classList.toggle("is-active", Number(img.dataset.scene) === sceneId);
         });
         sceneBlocks.forEach((block) => {
-          const active = block.dataset.scene === nextSceneId;
+          const active = Number(block.dataset.scene) === sceneId;
           block.classList.toggle("is-active", active);
           block.setAttribute("aria-current", active ? "true" : "false");
         });
+
+        if (sceneVisual) {
+          sceneVisual.setAttribute("data-active-scene", String(sceneId));
+        }
+        currentScene = sceneId;
       }
 
-      const getStoryProgress = () => {
-        const rect = story.getBoundingClientRect();
-        const storyTop = window.scrollY + rect.top;
-        const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-        const scrollableDistance = Math.max(1, story.offsetHeight - viewportHeight);
-        const current = window.scrollY - storyTop;
-        return Math.min(1, Math.max(0, current / scrollableDistance));
-      };
-
-      const updateSceneByScroll = () => {
-        const progress = getStoryProgress();
-        if (progress < 0.33) {
-          activateScene(1);
-        } else if (progress < 0.66) {
-          activateScene(2);
-        } else {
-          activateScene(3);
-        }
-      };
-
-      let cinematicRafId = 0;
-      let cinematicNeedsUpdate = false;
-
-      const runCinematicFrame = () => {
-        cinematicRafId = 0;
-        if (!cinematicNeedsUpdate) {
+      function safeActivate(sceneId) {
+        const now = Date.now();
+        if (sceneId === currentScene) {
           return;
         }
-        cinematicNeedsUpdate = false;
-        updateSceneByScroll();
-      };
-
-      const markCinematicDirty = () => {
-        cinematicNeedsUpdate = true;
-        if (cinematicRafId) {
+        if (now - lastSwitchTime < SWITCH_COOLDOWN_MS) {
           return;
         }
-        cinematicRafId = window.requestAnimationFrame(runCinematicFrame);
-      };
+        activateScene(sceneId);
+        lastSwitchTime = now;
+      }
 
-      activateScene(1, true);
-      markCinematicDirty();
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) {
+              return;
+            }
+            const sceneId = Number(entry.target.dataset.scene);
+            if (!Number.isFinite(sceneId)) {
+              return;
+            }
+            safeActivate(sceneId);
+          });
+        },
+        {
+          root: null,
+          threshold: 0.6,
+          rootMargin: "-40% 0px -40% 0px"
+        }
+      );
 
-      window.addEventListener("scroll", markCinematicDirty, { passive: true });
-      window.addEventListener("resize", markCinematicDirty);
-      window.addEventListener("orientationchange", markCinematicDirty, { passive: true });
+      sceneMarkers.forEach((marker) => observer.observe(marker));
     }
   }
 

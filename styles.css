@@ -1281,7 +1281,16 @@ textarea {
 }
 
 #story .cinematic__img[data-scene="1"] {
+  object-position: center 30% !important;
   filter: brightness(1.28) contrast(1.08) saturate(0.95);
+}
+
+#story .cinematic__img[data-scene="2"] {
+  object-position: center 35% !important;
+}
+
+#story .cinematic__img[data-scene="3"] {
+  object-position: center 32% !important;
 }
 
 #story .cinematic__img.is-active {
@@ -1321,10 +1330,14 @@ textarea {
   display: block;
 }
 
+#story .scene-marker {
+  grid-column: 1;
+  height: 60vh;
+}
+
 #story .cinematic__spacer {
   grid-column: 1;
-  grid-row: 2;
-  height: 140vh;
+  height: 80vh !important;
 }
 
 #story .raw-toggle {
@@ -1356,7 +1369,7 @@ textarea {
 
 @media (min-width: 1024px) {
   #story .cinematic__block {
-    bottom: 28px;
+    bottom: 22px;
   }
 }
 
