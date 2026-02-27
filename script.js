@@ -248,18 +248,9 @@
     const sceneBlocks = Array.from(story.querySelectorAll(".cinematic__block"));
 
     if (sceneImages.length > 0 && sceneBlocks.length > 0 && sceneMarkers.length > 0) {
-      const initialScene = Number(
-        story.querySelector(".cinematic__img.is-active")?.dataset.scene ||
-          story.querySelector(".cinematic__block.is-active")?.dataset.scene ||
-          "1"
-      );
-      let currentScene = Number.isFinite(initialScene) ? initialScene : 1;
+      let currentScene = 0;
       let lastSwitchAt = 0;
       const SWITCH_COOLDOWN_MS = 550;
-
-      if (sceneVisual) {
-        sceneVisual.setAttribute("data-active-scene", String(currentScene));
-      }
 
       function activateScene(sceneId) {
         if (sceneId === currentScene) {
@@ -308,6 +299,7 @@
           if (!Number.isFinite(sceneId)) {
             return;
           }
+          console.log("marker hit", sceneId);
           safeActivate(sceneId);
         },
         {
@@ -317,6 +309,7 @@
         }
       );
 
+      activateScene(1);
       sceneMarkers.forEach((marker) => observer.observe(marker));
     }
   }

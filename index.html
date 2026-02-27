@@ -156,38 +156,42 @@
     </section>
 
     <section id="story" class="cinematic" aria-label="Cinematic">
-      <div class="cinematic__media">
-        <img class="cinematic__img is-active" data-scene="1" src="scene1.jpg" alt="" loading="eager" />
-        <img class="cinematic__img" data-scene="2" src="scene2.jpg" alt="" loading="eager" />
-        <img class="cinematic__img" data-scene="3" src="scene3.jpg" alt="" loading="eager" />
-        <button class="raw-toggle" id="raw-toggle" type="button" aria-pressed="false" aria-label="シネマ画像をRAW表示に切り替える">
-          RAW
-        </button>
-      </div>
+      <div class="cinematic__inner">
+        <div class="cinematic__media">
+          <img class="cinematic__img is-active" data-scene="1" src="scene1.jpg" alt="" loading="eager" />
+          <img class="cinematic__img" data-scene="2" src="scene2.jpg" alt="" loading="eager" />
+          <img class="cinematic__img" data-scene="3" src="scene3.jpg" alt="" loading="eager" />
+          <button class="raw-toggle" id="raw-toggle" type="button" aria-pressed="false" aria-label="シネマ画像をRAW表示に切り替える">
+            RAW
+          </button>
+        </div>
 
-      <div class="cinematic__copy" aria-live="polite">
-        <div class="cinematic__block is-active" data-scene="1" aria-current="true">
-          <p class="scene-index">SCENE 01 / 夜</p>
-          <p class="cinematic__line">出所の日、<br />いちばん怖かったのは、<br />「帰る場所がない」という現実だった。</p>
-          <p class="cinematic__line">街は静かで、<br />自分だけが取り残されたように感じた。</p>
+        <div class="cinematic__copy" aria-live="polite">
+          <div class="cinematic__block is-active" data-scene="1" aria-current="true">
+            <p class="scene-index">SCENE 01 / 夜</p>
+            <p class="cinematic__line">出所の日、<br />いちばん怖かったのは、<br />「帰る場所がない」という現実だった。</p>
+            <p class="cinematic__line">街は静かで、<br />自分だけが取り残されたように感じた。</p>
+          </div>
+          <div class="cinematic__block" data-scene="2" aria-current="false">
+            <p class="scene-index">SCENE 02 / 支援</p>
+            <p class="cinematic__line">ルミライズから差し出されたのは、<br />説教でも、励ましでもない。</p>
+            <p class="cinematic__line"><strong>鍵だった。</strong></p>
+            <p class="cinematic__line">支援は、<br />“住まい”から設計する。</p>
+          </div>
+          <div class="cinematic__block" data-scene="3" aria-current="false">
+            <p class="scene-index">SCENE 03 / 朝</p>
+            <p class="cinematic__line">光は、外から差すのではない。<br />住まいが整った瞬間、内側から灯る。</p>
+            <p class="cinematic__line">ここから、人生は再起動する。</p>
+          </div>
         </div>
-        <div class="cinematic__block" data-scene="2" aria-current="false">
-          <p class="scene-index">SCENE 02 / 支援</p>
-          <p class="cinematic__line">ルミライズから差し出されたのは、<br />説教でも、励ましでもない。</p>
-          <p class="cinematic__line"><strong>鍵だった。</strong></p>
-          <p class="cinematic__line">支援は、<br />“住まい”から設計する。</p>
-        </div>
-        <div class="cinematic__block" data-scene="3" aria-current="false">
-          <p class="scene-index">SCENE 03 / 朝</p>
-          <p class="cinematic__line">光は、外から差すのではない。<br />住まいが整った瞬間、内側から灯る。</p>
-          <p class="cinematic__line">ここから、人生は再起動する。</p>
-        </div>
-      </div>
 
-      <div class="scene-marker" data-scene="1" aria-hidden="true"></div>
-      <div class="scene-marker" data-scene="2" aria-hidden="true"></div>
-      <div class="scene-marker" data-scene="3" aria-hidden="true"></div>
-      <div class="cinematic__spacer" aria-hidden="true"></div>
+        <div class="scene-markers" aria-hidden="true">
+          <div class="scene-marker" data-scene="1"></div>
+          <div class="scene-marker" data-scene="2"></div>
+          <div class="scene-marker" data-scene="3"></div>
+        </div>
+        <div class="cinematic__spacer" aria-hidden="true"></div>
+      </div>
     </section>
 
     <section class="brand-thesis" aria-label="思想">

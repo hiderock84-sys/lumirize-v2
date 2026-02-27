@@ -1246,6 +1246,9 @@ textarea {
 
 #story.cinematic {
   position: relative;
+}
+
+#story .cinematic__inner {
   margin: 0 auto;
   width: min(100%, 1200px);
   display: grid;
@@ -1333,14 +1336,22 @@ textarea {
   display: block;
 }
 
-#story .scene-marker {
+#story .scene-markers {
   grid-column: 1;
-  height: 60vh;
+  position: relative;
+  width: 100%;
+}
+
+#story .scene-marker {
+  height: 80vh;
+  width: 1px;
+  opacity: 0;
+  pointer-events: none;
 }
 
 #story .cinematic__spacer {
   grid-column: 1;
-  height: 80vh !important;
+  height: 90vh !important;
 }
 
 #story .raw-toggle {
