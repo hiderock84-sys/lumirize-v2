@@ -242,32 +242,71 @@
   }
 
   if (story) {
-    const sceneMarkers = document.querySelectorAll(".scene-marker");
-    let currentScene = 1;
+    const sceneMarkers = Array.from(story.querySelectorAll(".scene-marker"));
+    const sceneImages = Array.from(story.querySelectorAll(".cinematic__img"));
+    const sceneBlocks = Array.from(story.querySelectorAll(".cinematic__block"));
+    const MIN_HOLD_MS = 600;
+    const HYSTERESIS_MS = 200;
+    let currentScene = 0;
+    let lastSwitchAt = 0;
+    let pendingScene = null;
+    let pendingSince = 0;
 
     function activateScene(sceneId) {
       if (!Number.isFinite(sceneId) || sceneId === currentScene) {
-        return;
+        return false;
       }
-      document.querySelectorAll(".cinematic__img").forEach((img) => {
+      sceneImages.forEach((img) => {
         img.classList.toggle("is-active", img.dataset.scene == sceneId);
       });
-      document.querySelectorAll(".cinematic__block").forEach((block) => {
+      sceneBlocks.forEach((block) => {
         const active = block.dataset.scene == sceneId;
         block.classList.toggle("is-active", active);
         block.setAttribute("aria-current", active ? "true" : "false");
       });
       currentScene = sceneId;
+      return true;
     }
 
-    activateScene(1);
+    function requestScene(sceneId) {
+      if (!Number.isFinite(sceneId) || sceneId === currentScene) {
+        pendingScene = null;
+        pendingSince = 0;
+        return;
+      }
+
+      const now = Date.now();
+      if (now - lastSwitchAt < MIN_HOLD_MS) {
+        return;
+      }
+
+      if (pendingScene !== sceneId) {
+        pendingScene = sceneId;
+        pendingSince = now;
+        return;
+      }
+
+      if (now - pendingSince < HYSTERESIS_MS) {
+        return;
+      }
+
+      if (activateScene(sceneId)) {
+        lastSwitchAt = now;
+        pendingScene = null;
+        pendingSince = 0;
+      }
+    }
+
+    if (activateScene(1)) {
+      lastSwitchAt = Date.now();
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const sceneId = parseInt(entry.target.dataset.scene, 10);
-            activateScene(sceneId);
+            requestScene(sceneId);
           }
         });
       },
