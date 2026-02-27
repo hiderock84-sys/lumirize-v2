@@ -279,6 +279,7 @@
     const sceneVisual = story.querySelector(".cinematic__visual");
     const sceneImages = Array.from(story.querySelectorAll(".cinematic__img[data-scene]"));
     const sceneBlocks = Array.from(story.querySelectorAll(".cinematic__block[data-scene]"));
+    const sceneMarkers = Array.from(story.querySelectorAll(".scene-marker[data-scene]"));
 
     if (sceneImages.length > 0 && sceneBlocks.length > 0) {
       const sceneOrder = sceneBlocks.map((block) => block.dataset.scene).filter(Boolean);
@@ -288,29 +289,15 @@
         sceneOrder[2] || sceneOrder[sceneOrder.length - 1] || sceneOrder[0] || "1"
       ];
       const scene1Id = normalizedSceneOrder[0];
-      const scene2Id = normalizedSceneOrder[1];
-      const scene3Id = normalizedSceneOrder[2];
-
-      const SCENE1_RANGE_END = 0.55;
-      const SCENE2_RANGE_END = 0.80;
-      const S1_TO_S2 = 0.60;
-      const S2_TO_S1 = 0.45;
-      const S2_TO_S3 = 0.88;
-      const S3_TO_S2 = 0.75;
-      const MIN_SCENE1_HOLD_MS = 1000;
       const DEBUG_SCENE_LOG = false;
 
       let currentScene = scene1Id;
-      let lastSceneActivatedAt = window.performance.now();
-      let lastProgress = -1;
-      let storyIsVisible = false;
 
       const activateScene = (sceneId, force = false) => {
         if (!force && sceneId === currentScene) {
           return;
         }
         currentScene = sceneId;
-        lastSceneActivatedAt = window.performance.now();
         if (sceneVisual) {
           sceneVisual.setAttribute("data-active-scene", sceneId);
         }
@@ -327,128 +314,60 @@
         }
       };
 
-      const sceneByProgress = (progress) => {
-        if (progress < SCENE1_RANGE_END) {
-          return scene1Id;
-        }
-        if (progress < SCENE2_RANGE_END) {
-          return scene2Id;
-        }
-        return scene3Id;
-      };
+      activateScene(scene1Id, true);
 
-      const sceneByHysteresis = (progress) => {
-        if (currentScene === scene1Id) {
-          return progress > S1_TO_S2 ? scene2Id : scene1Id;
-        }
-        if (currentScene === scene2Id) {
-          if (progress < S2_TO_S1) {
-            return scene1Id;
-          }
-          if (progress > S2_TO_S3) {
-            return scene3Id;
-          }
-          return scene2Id;
-        }
-        return progress < S3_TO_S2 ? scene2Id : scene3Id;
-      };
+      if (sceneMarkers.length > 0 && "IntersectionObserver" in window) {
+        const markerRatios = new Map(sceneMarkers.map((marker) => [marker, 0]));
+        let markerRafId = 0;
 
-      let cinematicRafId = 0;
-      let cinematicNeedsUpdate = false;
+        const applyMarkerScene = () => {
+          markerRafId = 0;
+          let topMarker = null;
+          let topRatio = 0;
 
-      const updateCinematicByScroll = () => {
-        if (!storyIsVisible) {
-          return;
-        }
-        const rect = story.getBoundingClientRect();
-        const vh = window.innerHeight;
-        const storyTop = window.scrollY + rect.top;
-        const storyBottom = window.scrollY + rect.bottom;
-        const start = storyTop - vh * 0.28;
-        const end = storyBottom - vh * 0.42;
-        const span = Math.max(1, end - start);
-        const progress = Math.min(1, Math.max(0, (window.scrollY - start) / span));
-        if (Math.abs(progress - lastProgress) < 0.01) {
-          return;
-        }
-        lastProgress = progress;
+          markerRatios.forEach((ratio, marker) => {
+            if (ratio > topRatio) {
+              topRatio = ratio;
+              topMarker = marker;
+            }
+          });
 
-        if (reducedMotion) {
-          activateScene(sceneByProgress(progress));
-          return;
-        }
-
-        const nextSceneId = sceneByHysteresis(progress);
-        if (nextSceneId === currentScene) {
-          return;
-        }
-
-        const now = window.performance.now();
-        if (
-          currentScene === scene1Id &&
-          nextSceneId === scene2Id &&
-          now - lastSceneActivatedAt < MIN_SCENE1_HOLD_MS
-        ) {
-          return;
-        }
-
-        activateScene(nextSceneId);
-      };
-
-      const requestCinematicUpdate = () => {
-        cinematicNeedsUpdate = true;
-        if (!storyIsVisible) {
-          return;
-        }
-        if (cinematicRafId) {
-          return;
-        }
-        cinematicRafId = window.requestAnimationFrame(() => {
-          cinematicRafId = 0;
-          if (!cinematicNeedsUpdate) {
+          if (!topMarker || topRatio <= 0) {
             return;
           }
-          cinematicNeedsUpdate = false;
-          updateCinematicByScroll();
-        });
-      };
+          const sceneId = topMarker.getAttribute("data-scene");
+          if (!sceneId || sceneId === currentScene) {
+            return;
+          }
+          activateScene(sceneId);
+        };
 
-      const setStoryVisibility = (isVisible) => {
-        if (storyIsVisible === isVisible) {
-          return;
-        }
-        storyIsVisible = isVisible;
-        if (storyIsVisible) {
-          lastProgress = -1;
-          activateScene(scene1Id, true);
-          requestCinematicUpdate();
-        }
-      };
+        const requestMarkerSceneApply = () => {
+          if (markerRafId) {
+            return;
+          }
+          markerRafId = window.requestAnimationFrame(applyMarkerScene);
+        };
 
-      if ("IntersectionObserver" in window) {
-        const storyObserver = new IntersectionObserver(
+        const markerObserver = new IntersectionObserver(
           (entries) => {
             entries.forEach((entry) => {
-              if (entry.target !== story) {
+              if (!(entry.target instanceof HTMLElement)) {
                 return;
               }
-              setStoryVisibility(entry.isIntersecting && entry.intersectionRatio > 0.08);
+              markerRatios.set(entry.target, entry.isIntersecting ? entry.intersectionRatio : 0);
             });
+            requestMarkerSceneApply();
           },
           {
-            threshold: [0, 0.08, 0.24],
             root: null,
-            rootMargin: "-10% 0px -10% 0px"
+            threshold: 0.51,
+            rootMargin: "-45% 0px -45% 0px"
           }
         );
-        storyObserver.observe(story);
-      } else {
-        setStoryVisibility(true);
-      }
 
-      window.addEventListener("scroll", requestCinematicUpdate, { passive: true });
-      window.addEventListener("resize", requestCinematicUpdate);
-      window.addEventListener("orientationchange", requestCinematicUpdate, { passive: true });
+        sceneMarkers.forEach((marker) => markerObserver.observe(marker));
+      }
     }
   }
 

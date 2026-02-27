@@ -863,7 +863,11 @@ p {
 }
 
 .cinematic__spacer {
-  height: 60vh !important;
+  height: 80vh !important;
+}
+
+.scene-marker {
+  height: 60vh;
 }
 
 .cinematic__block {
