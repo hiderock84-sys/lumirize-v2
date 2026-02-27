@@ -847,9 +847,10 @@ p {
 .cinematic__media,
 .cinematic__visual.cinematic__media {
   width: 100%;
-  aspect-ratio: 3 / 4;
-  height: auto !important;
-  max-height: 92vh;
+  aspect-ratio: auto !important;
+  height: 88vh !important;
+  max-height: 920px !important;
+  min-height: 640px !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -862,7 +863,7 @@ p {
 }
 
 .cinematic__spacer {
-  height: 80vh !important;
+  height: 60vh !important;
 }
 
 .cinematic__block {

@@ -300,16 +300,16 @@
       const MIN_SCENE1_HOLD_MS = 1000;
       const DEBUG_SCENE_LOG = false;
 
-      let activeSceneId = scene1Id;
+      let currentScene = scene1Id;
       let lastSceneActivatedAt = window.performance.now();
       let lastProgress = -1;
       let storyIsVisible = false;
 
       const activateScene = (sceneId, force = false) => {
-        if (!force && sceneId === activeSceneId) {
+        if (!force && sceneId === currentScene) {
           return;
         }
-        activeSceneId = sceneId;
+        currentScene = sceneId;
         lastSceneActivatedAt = window.performance.now();
         if (sceneVisual) {
           sceneVisual.setAttribute("data-active-scene", sceneId);
@@ -338,10 +338,10 @@
       };
 
       const sceneByHysteresis = (progress) => {
-        if (activeSceneId === scene1Id) {
+        if (currentScene === scene1Id) {
           return progress > S1_TO_S2 ? scene2Id : scene1Id;
         }
-        if (activeSceneId === scene2Id) {
+        if (currentScene === scene2Id) {
           if (progress < S2_TO_S1) {
             return scene1Id;
           }
@@ -368,7 +368,7 @@
         const end = storyBottom - vh * 0.42;
         const span = Math.max(1, end - start);
         const progress = Math.min(1, Math.max(0, (window.scrollY - start) / span));
-        if (Math.abs(progress - lastProgress) < 0.0015 && !reducedMotion) {
+        if (Math.abs(progress - lastProgress) < 0.01) {
           return;
         }
         lastProgress = progress;
@@ -379,13 +379,13 @@
         }
 
         const nextSceneId = sceneByHysteresis(progress);
-        if (nextSceneId === activeSceneId) {
+        if (nextSceneId === currentScene) {
           return;
         }
 
         const now = window.performance.now();
         if (
-          activeSceneId === scene1Id &&
+          currentScene === scene1Id &&
           nextSceneId === scene2Id &&
           now - lastSceneActivatedAt < MIN_SCENE1_HOLD_MS
         ) {
