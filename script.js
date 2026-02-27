@@ -1,4 +1,21 @@
 (() => {
+  const el = document.getElementById("debugBadge");
+  if (!el) {
+    return;
+  }
+  el.textContent = "DEBUG: script.js loaded";
+})();
+
+document.addEventListener("DOMContentLoaded", () => {
+  const el = document.getElementById("debugBadge");
+  if (!el) {
+    return;
+  }
+  const markers = document.querySelectorAll(".scene-marker");
+  el.textContent = `DEBUG: DOM ready\nmarkers=${markers.length}`;
+});
+
+(() => {
   const root = document.documentElement;
   const body = document.body;
   const header = document.querySelector(".site-header");
