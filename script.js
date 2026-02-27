@@ -93,11 +93,39 @@
     }
   };
 
+  const heroRevealTargets = Array.from(document.querySelectorAll(".hero-reveal"));
+  let heroRevealPlayed = false;
+  const runHeroReveal = () => {
+    if (heroRevealPlayed || heroRevealTargets.length === 0) {
+      return;
+    }
+    heroRevealPlayed = true;
+
+    if (reducedMotion) {
+      heroRevealTargets.forEach((el) => {
+        el.classList.add("is-in");
+      });
+      return;
+    }
+
+    body.classList.add("hero-motion-ready");
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        heroRevealTargets.forEach((el) => {
+          el.classList.add("is-in");
+        });
+      });
+    });
+  };
+
   const syncMotionPreference = (event) => {
     reducedMotion = event.matches;
     if (reducedMotion) {
       document.querySelectorAll(".reveal").forEach((el) => {
         el.classList.add("is-visible");
+      });
+      heroRevealTargets.forEach((el) => {
+        el.classList.add("is-in");
       });
       scheduleParallax();
       return;
@@ -110,6 +138,11 @@
     motionQuery.addEventListener("change", syncMotionPreference);
   } else if (typeof motionQuery.addListener === "function") {
     motionQuery.addListener(syncMotionPreference);
+  }
+
+  document.addEventListener("DOMContentLoaded", runHeroReveal, { once: true });
+  if (document.readyState !== "loading") {
+    runHeroReveal();
   }
 
   setHeaderOffset();
