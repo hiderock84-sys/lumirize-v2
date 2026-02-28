@@ -1387,7 +1387,7 @@ textarea {
 
 #story .cinematic__img[data-scene="1"] {
   object-position: center 30% !important;
-  filter: brightness(1.28) contrast(1.08) saturate(0.95);
+  filter: brightness(1.22) contrast(1.1) saturate(0.95);
 }
 
 #story .cinematic__img[data-scene="2"] {
@@ -1436,19 +1436,6 @@ textarea {
   display: block;
 }
 
-#story .scene-markers {
-  grid-column: 1;
-  position: relative;
-  width: 100%;
-}
-
-#story .scene-marker {
-  height: 90vh;
-  width: 1px;
-  opacity: 0;
-  pointer-events: none;
-}
-
 #story .cinematic__spacer {
   grid-column: 1;
   height: 120vh !important;
@@ -1481,18 +1468,14 @@ textarea {
   filter: none;
 }
 
+#story .cinematic__media[data-active-scene="1"] .cinematic__overlay,
+#story .cinematic__media[data-active-scene="1"]::after {
+  opacity: 0.22;
+}
+
 @media (min-width: 1024px) {
   #story .cinematic__block {
     bottom: 22px;
-  }
-
-  #story .cinematic__img[data-scene="1"] {
-    filter: brightness(1.28) contrast(1.1) saturate(0.95);
-  }
-
-  #story .cinematic__media[data-active-scene="1"] .cinematic__overlay,
-  #story .cinematic__media[data-active-scene="1"]::after {
-    opacity: 0.22;
   }
 }
 

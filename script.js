@@ -228,7 +228,6 @@
 
   if (story) {
     const sceneVisual = story.querySelector(".cinematic__media, .cinematic__visual");
-    const sceneMarkers = Array.from(story.querySelectorAll(".scene-marker[data-scene]"));
     const sceneImages = Array.from(story.querySelectorAll(".cinematic__img"));
     const sceneBlocks = Array.from(story.querySelectorAll(".cinematic__block"));
     let currentScene = String(
@@ -261,25 +260,48 @@
 
     activateScene(1, true);
 
-    if (sceneMarkers.length > 0) {
-      const markerObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (!entry.isIntersecting) {
-              return;
-            }
-            const sceneId = entry.target.dataset.scene;
-            activateScene(sceneId);
-          });
-        },
-        {
-          root: null,
-          threshold: 0.55
-        }
-      );
+    let cinematicRafId = 0;
+    let cinematicNeedsUpdate = false;
 
-      sceneMarkers.forEach((marker) => markerObserver.observe(marker));
-    }
+    const updateCinematic = () => {
+      cinematicRafId = 0;
+      if (!cinematicNeedsUpdate && !reducedMotion) {
+        return;
+      }
+      cinematicNeedsUpdate = false;
+
+      const rect = story.getBoundingClientRect();
+      const viewH = window.innerHeight || 1;
+      const total = Math.max(1, story.offsetHeight - viewH);
+      const scrolled = Math.min(Math.max(-rect.top, 0), total);
+      const progress = Math.min(0.9999, Math.max(0, total > 0 ? scrolled / total : 0));
+
+      let nextScene = "1";
+      if (progress >= 0.8) {
+        nextScene = "3";
+      } else if (progress >= 0.45) {
+        nextScene = "2";
+      }
+
+      activateScene(nextScene);
+    };
+
+    const requestCinematicUpdate = () => {
+      if (reducedMotion) {
+        updateCinematic();
+        return;
+      }
+      cinematicNeedsUpdate = true;
+      if (cinematicRafId) {
+        return;
+      }
+      cinematicRafId = window.requestAnimationFrame(updateCinematic);
+    };
+
+    window.addEventListener("scroll", requestCinematicUpdate, { passive: true });
+    window.addEventListener("resize", requestCinematicUpdate);
+    window.addEventListener("orientationchange", requestCinematicUpdate, { passive: true });
+    requestCinematicUpdate();
   }
 
   const form = document.querySelector("#contact-form");
