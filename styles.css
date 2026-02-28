@@ -537,37 +537,53 @@ p {
   text-transform: uppercase;
 }
 
-.scene-04 {
+.cinematicEnd {
   background: #000;
   color: #fff;
-  padding: 140px 24px;
-  text-align: left;
 }
 
-.scene-04__inner {
-  max-width: 1000px;
+.cinematicEnd__page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(4rem, 10vw, 9rem) clamp(1.25rem, 4vw, 2.5rem);
+}
+
+.cinematicEnd__inner {
+  width: min(100%, 1000px);
   margin: 0 auto;
 }
 
-.scene-04 p {
-  font-size: clamp(28px, 5vw, 56px);
-  font-weight: 700;
-  margin-bottom: 24px;
-  letter-spacing: 0.04em;
+.cinematicEnd__page--primary .cinematicEnd__inner {
+  text-align: left;
 }
 
-.scene-04__sub {
-  margin-top: 40px;
-  font-size: 14px;
-  letter-spacing: 0.25em;
-  opacity: 0.7;
+.cinematicEnd__page--secondary .cinematicEnd__inner {
+  text-align: center;
+}
+
+.cinematicEnd__line {
+  margin: 0 0 0.9rem;
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  line-height: 1.34;
+  letter-spacing: 0.03em;
+  font-weight: 800;
+}
+
+.cinematicEnd__sub {
+  margin-top: 2rem;
+  font-size: clamp(0.78rem, 1.25vw, 1rem);
+  letter-spacing: 0.22em;
+  opacity: 0.76;
+  text-transform: uppercase;
+  font-weight: 700;
 }
 
 .cinematic {
   position: relative;
   display: grid;
   gap: 1rem;
-  padding-bottom: 200vh;
 }
 
 .cinematic__visual {
@@ -1363,9 +1379,22 @@ textarea {
   display: block;
 }
 
+#story .scene-markers {
+  grid-column: 1;
+  position: relative;
+  width: 100%;
+}
+
+#story .scene-marker {
+  height: 90vh;
+  width: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
 #story .cinematic__spacer {
   grid-column: 1;
-  height: 100vh !important;
+  height: 120vh !important;
 }
 
 #story .raw-toggle {
@@ -1398,6 +1427,15 @@ textarea {
 @media (min-width: 1024px) {
   #story .cinematic__block {
     bottom: 22px;
+  }
+
+  #story .cinematic__img[data-scene="1"] {
+    filter: brightness(1.28) contrast(1.1) saturate(0.95);
+  }
+
+  #story .cinematic__media[data-active-scene="1"] .cinematic__overlay,
+  #story .cinematic__media[data-active-scene="1"]::after {
+    opacity: 0.22;
   }
 }
 

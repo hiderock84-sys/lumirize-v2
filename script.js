@@ -227,9 +227,15 @@
   });
 
   if (story) {
+    const sceneVisual = story.querySelector(".cinematic__media, .cinematic__visual");
+    const sceneMarkers = Array.from(story.querySelectorAll(".scene-marker[data-scene]"));
     const sceneImages = Array.from(story.querySelectorAll(".cinematic__img"));
     const sceneBlocks = Array.from(story.querySelectorAll(".cinematic__block"));
-    let currentScene = "1";
+    let currentScene = String(
+      story.querySelector(".cinematic__img.is-active")?.dataset.scene ||
+        story.querySelector(".cinematic__block.is-active")?.dataset.scene ||
+        "1"
+    );
 
     function activateScene(sceneId, force = false) {
       sceneId = String(sceneId);
@@ -246,40 +252,43 @@
         block.setAttribute("aria-current", active ? "true" : "false");
       });
 
+      if (sceneVisual) {
+        sceneVisual.setAttribute("data-active-scene", sceneId);
+      }
+
       currentScene = sceneId;
     }
 
-    function updateCinematic() {
-      const rect = story.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const total = rect.height - vh;
-      const passed = Math.min(Math.max(-rect.top, 0), total);
-      const progress = total > 0 ? passed / total : 0;
+    activateScene("1", true);
 
-      let next = "1";
-      if (progress >= 0.66) {
-        next = "3";
-      } else if (progress >= 0.33) {
-        next = "2";
-      }
+    if (sceneMarkers.length > 0) {
+      const markerObserver = new IntersectionObserver(
+        (entries) => {
+          const candidates = entries.filter((entry) => entry.isIntersecting && entry.target?.dataset?.scene);
+          if (candidates.length === 0) {
+            return;
+          }
 
-      if (next !== currentScene) {
-        activateScene(next);
-      }
+          const viewportCenter = window.innerHeight / 2;
+          const best = candidates.reduce((nearest, entry) => {
+            const nearestMid = (nearest.boundingClientRect.top + nearest.boundingClientRect.bottom) / 2;
+            const entryMid = (entry.boundingClientRect.top + entry.boundingClientRect.bottom) / 2;
+            const nearestDist = Math.abs(nearestMid - viewportCenter);
+            const entryDist = Math.abs(entryMid - viewportCenter);
+            return entryDist < nearestDist ? entry : nearest;
+          });
+
+          activateScene(best.target.dataset.scene);
+        },
+        {
+          root: null,
+          threshold: 0,
+          rootMargin: "-40% 0px -40% 0px"
+        }
+      );
+
+      sceneMarkers.forEach((marker) => markerObserver.observe(marker));
     }
-
-    function onScroll() {
-      window.requestAnimationFrame(updateCinematic);
-    }
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-
-    document.addEventListener("DOMContentLoaded", () => {
-      currentScene = "";
-      activateScene("1", true);
-      updateCinematic();
-    });
   }
 
   const form = document.querySelector("#contact-form");
