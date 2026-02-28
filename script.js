@@ -229,18 +229,19 @@
   if (story) {
     const sceneImages = Array.from(story.querySelectorAll(".cinematic__img"));
     const sceneBlocks = Array.from(story.querySelectorAll(".cinematic__block"));
-    let currentScene = 1;
+    let currentScene = "1";
 
-    function activateScene(sceneId) {
-      if (!Number.isFinite(sceneId) || sceneId === currentScene) {
+    function activateScene(sceneId, force = false) {
+      sceneId = String(sceneId);
+      if ((sceneId !== "1" && sceneId !== "2" && sceneId !== "3") || (!force && sceneId === currentScene)) {
         return;
       }
 
       sceneImages.forEach((img) => {
-        img.classList.toggle("is-active", img.dataset.scene == sceneId);
+        img.classList.toggle("is-active", img.dataset.scene === sceneId);
       });
       sceneBlocks.forEach((block) => {
-        const active = block.dataset.scene == sceneId;
+        const active = block.dataset.scene === sceneId;
         block.classList.toggle("is-active", active);
         block.setAttribute("aria-current", active ? "true" : "false");
       });
@@ -255,11 +256,11 @@
       const passed = Math.min(Math.max(-rect.top, 0), total);
       const progress = total > 0 ? passed / total : 0;
 
-      let next = 1;
+      let next = "1";
       if (progress >= 0.66) {
-        next = 3;
+        next = "3";
       } else if (progress >= 0.33) {
-        next = 2;
+        next = "2";
       }
 
       if (next !== currentScene) {
@@ -275,8 +276,8 @@
     window.addEventListener("resize", onScroll);
 
     document.addEventListener("DOMContentLoaded", () => {
-      currentScene = 0;
-      activateScene(1);
+      currentScene = "";
+      activateScene("1", true);
       updateCinematic();
     });
   }
