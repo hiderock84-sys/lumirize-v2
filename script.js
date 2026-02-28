@@ -259,31 +259,22 @@
       currentScene = sceneId;
     }
 
-    activateScene("1", true);
+    activateScene(1, true);
 
     if (sceneMarkers.length > 0) {
       const markerObserver = new IntersectionObserver(
         (entries) => {
-          const candidates = entries.filter((entry) => entry.isIntersecting && entry.target?.dataset?.scene);
-          if (candidates.length === 0) {
-            return;
-          }
-
-          const viewportCenter = window.innerHeight / 2;
-          const best = candidates.reduce((nearest, entry) => {
-            const nearestMid = (nearest.boundingClientRect.top + nearest.boundingClientRect.bottom) / 2;
-            const entryMid = (entry.boundingClientRect.top + entry.boundingClientRect.bottom) / 2;
-            const nearestDist = Math.abs(nearestMid - viewportCenter);
-            const entryDist = Math.abs(entryMid - viewportCenter);
-            return entryDist < nearestDist ? entry : nearest;
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) {
+              return;
+            }
+            const sceneId = entry.target.dataset.scene;
+            activateScene(sceneId);
           });
-
-          activateScene(best.target.dataset.scene);
         },
         {
           root: null,
-          threshold: 0,
-          rootMargin: "-40% 0px -40% 0px"
+          threshold: 0.55
         }
       );
 
