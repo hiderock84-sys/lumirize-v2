@@ -821,6 +821,51 @@ p {
   margin-bottom: 0;
 }
 
+.institutional-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.institutional-item p:last-child,
+.institutional-strength p:last-child {
+  margin-bottom: 0;
+}
+
+.institutional-strength {
+  margin-top: 1rem;
+}
+
+.stability-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.stability-step {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.stability-step__num {
+  margin: 0;
+  color: #bde7e7;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+}
+
+.stability-step p:last-child {
+  margin-bottom: 0;
+}
+
+.assurance-grid {
+  margin-top: 1rem;
+  display: grid;
+  gap: 1rem;
+}
+
 .process-list {
   list-style: none;
   margin: 0;
@@ -1146,6 +1191,18 @@ textarea {
   }
 
   .support-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .institutional-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .stability-steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .assurance-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
