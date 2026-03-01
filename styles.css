@@ -1346,6 +1346,7 @@ textarea {
 
 #story.cinematic {
   position: relative;
+  height: 300vh;
 }
 
 #story .cinematic__inner {

@@ -267,9 +267,14 @@
       }
 
       function computeProgress(storyEl) {
-        const rect = storyEl.getBoundingClientRect();
-        const denom = Math.max(1, rect.height - window.innerHeight);
-        const p = -rect.top / denom;
+        const scrollY = window.scrollY;
+        const start = storyEl.offsetTop;
+        const end = start + storyEl.offsetHeight;
+        const denom = end - start - window.innerHeight;
+        if (denom <= 0) {
+          return 0;
+        }
+        const p = (scrollY - start) / denom;
         return Math.min(Math.max(p, 0), 1);
       }
 
