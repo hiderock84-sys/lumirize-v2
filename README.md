@@ -38,6 +38,9 @@ GitHub Pagesで動く静的サイトとして、公式サイトを高品質に�
 - iPhone Safariでレイアウト崩れなし
 - Cinematic中の文字が画像の後ろに回らない（z-index）
 - tel/mailto/ナビが動く
+
+## Cinematicデバッグモード
+- `/index.html?debug=1` で右下に診断HUDを表示（通常URLでは非表示）
 # lumirize
 株式会社ルミライズ
 

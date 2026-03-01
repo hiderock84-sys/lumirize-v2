@@ -226,82 +226,240 @@
     el.classList.add("is-visible");
   });
 
+  /* Cinematic scene switch (stable + debug) */
   if (story) {
     const sceneVisual = story.querySelector(".cinematic__media, .cinematic__visual");
-    const sceneImages = Array.from(story.querySelectorAll(".cinematic__img"));
-    const sceneBlocks = Array.from(story.querySelectorAll(".cinematic__block"));
-    let currentScene = String(
-      story.querySelector(".cinematic__img.is-active")?.dataset.scene ||
-        story.querySelector(".cinematic__block.is-active")?.dataset.scene ||
-        "1"
-    );
+    const imgs = story.querySelectorAll(".cinematic__img");
+    const blocks = story.querySelectorAll(".cinematic__block");
+    const count = Math.min(imgs.length, blocks.length);
+    if (count >= 3) {
+      const DEBUG = new URLSearchParams(window.location.search).has("debug");
+      const CUT_12 = 0.45;
+      const CUT_23 = 0.8;
+      const HYS = 0.02;
+      const TH = {
+        enter2: CUT_12 + HYS,
+        exit2: CUT_12 - HYS,
+        enter3: CUT_23 + HYS,
+        exit3: CUT_23 - HYS
+      };
+      const ACTIVE_CLASS = "is-active";
 
-    function activateScene(sceneId, force = false) {
-      sceneId = String(sceneId);
-      if ((sceneId !== "1" && sceneId !== "2" && sceneId !== "3") || (!force && sceneId === currentScene)) {
-        return;
+      let rangeStart = 0;
+      let rangeEnd = 1;
+      let currentIndex = 0;
+      let ticking = false;
+
+      // DEBUG stats (created/updated only when ?debug=1)
+      let switchCount = 0;
+      let lastSwitchAt = 0;
+      let lastRafAt = window.performance.now();
+      let fps = 0;
+
+      const clamp01 = (x) => Math.max(0, Math.min(1, x));
+
+      const computeRange = () => {
+        const rect = story.getBoundingClientRect();
+        const scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
+        const top = rect.top + scrollTop;
+        const height = story.offsetHeight;
+        rangeStart = top;
+        rangeEnd = Math.max(rangeStart + 1, top + height - window.innerHeight);
+        if (DEBUG) {
+          console.log("[Cinematic][range]", {
+            storyHeight: height,
+            innerHeight: window.innerHeight,
+            rangeStart,
+            rangeEnd,
+            span: rangeEnd - rangeStart
+          });
+        }
+      };
+
+      const getProgress = () => {
+        const y = window.scrollY || document.documentElement.scrollTop || 0;
+        const p = (y - rangeStart) / (rangeEnd - rangeStart);
+        return clamp01(p);
+      };
+
+      const decideIndex = (p, cur) => {
+        if (cur === 0) {
+          return p >= TH.enter2 ? 1 : 0;
+        }
+        if (cur === 1) {
+          if (p >= TH.enter3) {
+            return 2;
+          }
+          if (p <= TH.exit2) {
+            return 0;
+          }
+          return 1;
+        }
+        return p <= TH.exit3 ? 1 : 2;
+      };
+
+      let hud = null;
+      const ensureHUD = () => {
+        if (!DEBUG || hud) {
+          return;
+        }
+        const style = document.createElement("style");
+        style.textContent =
+          ".cinematic-debug-hud{position:fixed;right:12px;bottom:12px;z-index:99999;font:12px/1.35 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,\"Liberation Mono\",\"Courier New\",monospace;background:rgba(0,0,0,.65);color:#fff;padding:10px 12px;border-radius:10px;max-width:320px;pointer-events:none;white-space:pre;}";
+        document.head.appendChild(style);
+        hud = document.createElement("div");
+        hud.className = "cinematic-debug-hud";
+        document.body.appendChild(hud);
+      };
+
+      const updateHUD = (p, nextIndex) => {
+        if (!DEBUG) {
+          return;
+        }
+        ensureHUD();
+        const rect = story.getBoundingClientRect();
+        const y = window.scrollY || document.documentElement.scrollTop || 0;
+        hud.textContent = `progress: ${p.toFixed(3)}
+current: ${currentIndex}  next: ${nextIndex}
+rangeStart: ${Math.round(rangeStart)}  rangeEnd: ${Math.round(rangeEnd)}
+storyRect.top: ${Math.round(rect.top)}  height: ${Math.round(rect.height)}
+innerHeight: ${window.innerHeight}  scrollY: ${Math.round(y)}
+fps: ${fps.toFixed(1)}
+lastSwitchAt: ${Math.round(lastSwitchAt)}ms
+switchCount: ${switchCount}`;
+      };
+
+      function activateScene(nextIndex, p = 0, force = false) {
+        if (nextIndex === currentIndex && !force) {
+          return;
+        }
+
+        imgs[currentIndex]?.classList.remove(ACTIVE_CLASS);
+        blocks[currentIndex]?.classList.remove(ACTIVE_CLASS);
+        blocks[currentIndex]?.setAttribute("aria-current", "false");
+
+        imgs[nextIndex]?.classList.add(ACTIVE_CLASS);
+        blocks[nextIndex]?.classList.add(ACTIVE_CLASS);
+        blocks[nextIndex]?.setAttribute("aria-current", "true");
+
+        if (sceneVisual) {
+          sceneVisual.setAttribute("data-active-scene", String(nextIndex + 1));
+        }
+
+        if (DEBUG) {
+          switchCount += 1;
+          lastSwitchAt = window.performance.now();
+          console.log("[Cinematic][switch]", {
+            from: currentIndex,
+            to: nextIndex,
+            progress: Number(p.toFixed(3)),
+            scrollY: window.scrollY || document.documentElement.scrollTop || 0,
+            rangeStart,
+            rangeEnd
+          });
+        }
+
+        currentIndex = nextIndex;
+        updateHUD(p, nextIndex);
       }
 
-      sceneImages.forEach((img) => {
-        img.classList.toggle("is-active", img.dataset.scene === sceneId);
-      });
-      sceneBlocks.forEach((block) => {
-        const active = block.dataset.scene === sceneId;
-        block.classList.toggle("is-active", active);
-        block.setAttribute("aria-current", active ? "true" : "false");
-      });
+      const update = () => {
+        ticking = false;
+        const now = window.performance.now();
+        const dt = now - lastRafAt;
+        lastRafAt = now;
+        if (dt > 0) {
+          fps = 1000 / dt;
+        }
 
-      if (sceneVisual) {
-        sceneVisual.setAttribute("data-active-scene", sceneId);
+        const p = getProgress();
+        const next = decideIndex(p, currentIndex);
+        updateHUD(p, next);
+        activateScene(next, p);
+      };
+
+      const requestUpdate = () => {
+        if (reducedMotion) {
+          update();
+          return;
+        }
+        if (ticking) {
+          return;
+        }
+        ticking = true;
+        window.requestAnimationFrame(update);
+      };
+
+      const initActive = () => {
+        for (let i = 0; i < count; i += 1) {
+          const active = i === 0;
+          imgs[i]?.classList.toggle(ACTIVE_CLASS, active);
+          blocks[i]?.classList.toggle(ACTIVE_CLASS, active);
+          blocks[i]?.setAttribute("aria-current", active ? "true" : "false");
+        }
+        currentIndex = 0;
+        if (sceneVisual) {
+          sceneVisual.setAttribute("data-active-scene", "1");
+        }
+      };
+
+      const init = () => {
+        computeRange();
+        initActive();
+        update();
+      };
+
+      window.addEventListener(
+        "load",
+        () => {
+          computeRange();
+          requestUpdate();
+        },
+        { passive: true }
+      );
+
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready
+          .then(() => {
+            computeRange();
+            requestUpdate();
+          })
+          .catch(() => {});
       }
 
-      currentScene = sceneId;
-    }
-
-    activateScene(1, true);
-
-    let cinematicRafId = 0;
-    let cinematicNeedsUpdate = false;
-
-    const updateCinematic = () => {
-      cinematicRafId = 0;
-      if (!cinematicNeedsUpdate && !reducedMotion) {
-        return;
-      }
-      cinematicNeedsUpdate = false;
-
-      const rect = story.getBoundingClientRect();
-      const viewH = window.innerHeight || 1;
-      const total = Math.max(1, story.offsetHeight - viewH);
-      const scrolled = Math.min(Math.max(-rect.top, 0), total);
-      const progress = Math.min(0.9999, Math.max(0, total > 0 ? scrolled / total : 0));
-
-      let nextScene = "1";
-      if (progress >= 0.8) {
-        nextScene = "3";
-      } else if (progress >= 0.45) {
-        nextScene = "2";
+      if (window.ResizeObserver) {
+        const ro = new ResizeObserver(() => {
+          computeRange();
+          requestUpdate();
+        });
+        ro.observe(story);
       }
 
-      activateScene(nextScene);
-    };
+      window.addEventListener(
+        "resize",
+        () => {
+          computeRange();
+          requestUpdate();
+        },
+        { passive: true }
+      );
+      window.addEventListener(
+        "orientationchange",
+        () => {
+          computeRange();
+          requestUpdate();
+        },
+        { passive: true }
+      );
 
-    const requestCinematicUpdate = () => {
       if (reducedMotion) {
-        updateCinematic();
-        return;
+        window.addEventListener("scroll", update, { passive: true });
+      } else {
+        window.addEventListener("scroll", requestUpdate, { passive: true });
       }
-      cinematicNeedsUpdate = true;
-      if (cinematicRafId) {
-        return;
-      }
-      cinematicRafId = window.requestAnimationFrame(updateCinematic);
-    };
 
-    window.addEventListener("scroll", requestCinematicUpdate, { passive: true });
-    window.addEventListener("resize", requestCinematicUpdate);
-    window.addEventListener("orientationchange", requestCinematicUpdate, { passive: true });
-    requestCinematicUpdate();
+      init();
+    }
   }
 
   const form = document.querySelector("#contact-form");
