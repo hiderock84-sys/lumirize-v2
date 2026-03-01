@@ -226,239 +226,101 @@
     el.classList.add("is-visible");
   });
 
-  /* Cinematic scene switch (stable + debug) */
   if (story) {
     const sceneVisual = story.querySelector(".cinematic__media, .cinematic__visual");
-    const imgs = story.querySelectorAll(".cinematic__img");
-    const blocks = story.querySelectorAll(".cinematic__block");
-    const count = Math.min(imgs.length, blocks.length);
-    if (count >= 3) {
-      const DEBUG = new URLSearchParams(window.location.search).has("debug");
-      const CUT_12 = 0.45;
-      const CUT_23 = 0.8;
-      const HYS = 0.02;
-      const TH = {
-        enter2: CUT_12 + HYS,
-        exit2: CUT_12 - HYS,
-        enter3: CUT_23 + HYS,
-        exit3: CUT_23 - HYS
-      };
-      const ACTIVE_CLASS = "is-active";
+    const sceneImages = Array.from(story.querySelectorAll(".cinematic__img"));
+    const sceneBlocks = Array.from(story.querySelectorAll(".cinematic__block"));
+    const sceneCount = Math.min(sceneImages.length, sceneBlocks.length);
 
-      let rangeStart = 0;
-      let rangeEnd = 1;
-      let currentIndex = 0;
-      let ticking = false;
+    if (sceneCount >= 3) {
+      let currentSceneId = 0;
+      let rafId = 0;
 
-      // DEBUG stats (created/updated only when ?debug=1)
-      let switchCount = 0;
-      let lastSwitchAt = 0;
-      let lastRafAt = window.performance.now();
-      let fps = 0;
+      // しきい値（必要ならここだけ微調整）
+      const T1 = 0.42; // 1→2
+      const T2 = 0.85; // 2→3
 
-      const clamp01 = (x) => Math.max(0, Math.min(1, x));
-
-      const computeRange = () => {
-        const rect = story.getBoundingClientRect();
-        const scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
-        const top = rect.top + scrollTop;
-        const height = story.offsetHeight;
-        rangeStart = top;
-        rangeEnd = Math.max(rangeStart + 1, top + height - window.innerHeight);
-        if (DEBUG) {
-          console.log("[Cinematic][range]", {
-            storyHeight: height,
-            innerHeight: window.innerHeight,
-            rangeStart,
-            rangeEnd,
-            span: rangeEnd - rangeStart
-          });
+      function activateScene(sceneId, force = false) {
+        const normalizedId = Number(sceneId);
+        if (!Number.isFinite(normalizedId) || normalizedId < 1 || normalizedId > 3) {
+          return;
         }
-      };
-
-      const getProgress = () => {
-        const y = window.scrollY || document.documentElement.scrollTop || 0;
-        const p = (y - rangeStart) / (rangeEnd - rangeStart);
-        return clamp01(p);
-      };
-
-      const decideIndex = (p, cur) => {
-        if (cur === 0) {
-          return p >= TH.enter2 ? 1 : 0;
+        if (!force && currentSceneId === normalizedId) {
+          return;
         }
-        if (cur === 1) {
-          if (p >= TH.enter3) {
-            return 2;
-          }
-          if (p <= TH.exit2) {
-            return 0;
-          }
+
+        const targetIndex = normalizedId - 1;
+        sceneImages.forEach((img, index) => {
+          img.classList.toggle("is-active", index === targetIndex);
+        });
+        sceneBlocks.forEach((block, index) => {
+          const active = index === targetIndex;
+          block.classList.toggle("is-active", active);
+          block.setAttribute("aria-current", active ? "true" : "false");
+        });
+
+        if (sceneVisual) {
+          sceneVisual.setAttribute("data-active-scene", String(normalizedId));
+        }
+
+        currentSceneId = normalizedId;
+      }
+
+      function computeProgress(storyEl) {
+        const rect = storyEl.getBoundingClientRect();
+        const denom = Math.max(1, rect.height - window.innerHeight);
+        const p = -rect.top / denom;
+        return Math.min(Math.max(p, 0), 1);
+      }
+
+      function sceneFromProgress(p) {
+        if (p < T1) {
           return 1;
         }
-        return p <= TH.exit3 ? 1 : 2;
-      };
-
-      let hud = null;
-      const ensureHUD = () => {
-        if (!DEBUG || hud) {
-          return;
+        if (p < T2) {
+          return 2;
         }
-        const style = document.createElement("style");
-        style.textContent =
-          ".cinematic-debug-hud{position:fixed;right:12px;bottom:12px;z-index:99999;font:12px/1.35 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,\"Liberation Mono\",\"Courier New\",monospace;background:rgba(0,0,0,.65);color:#fff;padding:10px 12px;border-radius:10px;max-width:320px;pointer-events:none;white-space:pre;}";
-        document.head.appendChild(style);
-        hud = document.createElement("div");
-        hud.className = "cinematic-debug-hud";
-        document.body.appendChild(hud);
-      };
-
-      const updateHUD = (p, nextIndex) => {
-        if (!DEBUG) {
-          return;
-        }
-        ensureHUD();
-        const rect = story.getBoundingClientRect();
-        const y = window.scrollY || document.documentElement.scrollTop || 0;
-        hud.textContent = `progress: ${p.toFixed(3)}
-current: ${currentIndex}  next: ${nextIndex}
-rangeStart: ${Math.round(rangeStart)}  rangeEnd: ${Math.round(rangeEnd)}
-storyRect.top: ${Math.round(rect.top)}  height: ${Math.round(rect.height)}
-innerHeight: ${window.innerHeight}  scrollY: ${Math.round(y)}
-fps: ${fps.toFixed(1)}
-lastSwitchAt: ${Math.round(lastSwitchAt)}ms
-switchCount: ${switchCount}`;
-      };
-
-      function activateScene(nextIndex, p = 0, force = false) {
-        if (nextIndex === currentIndex && !force) {
-          return;
-        }
-
-        imgs[currentIndex]?.classList.remove(ACTIVE_CLASS);
-        blocks[currentIndex]?.classList.remove(ACTIVE_CLASS);
-        blocks[currentIndex]?.setAttribute("aria-current", "false");
-
-        imgs[nextIndex]?.classList.add(ACTIVE_CLASS);
-        blocks[nextIndex]?.classList.add(ACTIVE_CLASS);
-        blocks[nextIndex]?.setAttribute("aria-current", "true");
-
-        if (sceneVisual) {
-          sceneVisual.setAttribute("data-active-scene", String(nextIndex + 1));
-        }
-
-        if (DEBUG) {
-          switchCount += 1;
-          lastSwitchAt = window.performance.now();
-          console.log("[Cinematic][switch]", {
-            from: currentIndex,
-            to: nextIndex,
-            progress: Number(p.toFixed(3)),
-            scrollY: window.scrollY || document.documentElement.scrollTop || 0,
-            rangeStart,
-            rangeEnd
-          });
-        }
-
-        currentIndex = nextIndex;
-        updateHUD(p, nextIndex);
+        return 3;
       }
 
-      const update = () => {
-        ticking = false;
-        const now = window.performance.now();
-        const dt = now - lastRafAt;
-        lastRafAt = now;
-        if (dt > 0) {
-          fps = 1000 / dt;
-        }
-
-        const p = getProgress();
-        const next = decideIndex(p, currentIndex);
-        updateHUD(p, next);
-        activateScene(next, p);
-      };
-
-      const requestUpdate = () => {
-        if (reducedMotion) {
-          update();
+      function updateCinematic(force = false) {
+        const targetStory = document.querySelector("#story");
+        if (!targetStory) {
           return;
         }
-        if (ticking) {
-          return;
+
+        const p = computeProgress(targetStory);
+        const nextId = sceneFromProgress(p);
+
+        // ★ここが肝：上スクでも必ず更新できる
+        if (force || nextId !== currentSceneId) {
+          currentSceneId = nextId;
+          activateScene(nextId, true); // force=true で確実に反映
         }
-        ticking = true;
-        window.requestAnimationFrame(update);
-      };
-
-      const initActive = () => {
-        for (let i = 0; i < count; i += 1) {
-          const active = i === 0;
-          imgs[i]?.classList.toggle(ACTIVE_CLASS, active);
-          blocks[i]?.classList.toggle(ACTIVE_CLASS, active);
-          blocks[i]?.setAttribute("aria-current", active ? "true" : "false");
-        }
-        currentIndex = 0;
-        if (sceneVisual) {
-          sceneVisual.setAttribute("data-active-scene", "1");
-        }
-      };
-
-      const init = () => {
-        computeRange();
-        initActive();
-        update();
-      };
-
-      window.addEventListener(
-        "load",
-        () => {
-          computeRange();
-          requestUpdate();
-        },
-        { passive: true }
-      );
-
-      if (document.fonts && document.fonts.ready) {
-        document.fonts.ready
-          .then(() => {
-            computeRange();
-            requestUpdate();
-          })
-          .catch(() => {});
       }
 
-      if (window.ResizeObserver) {
-        const ro = new ResizeObserver(() => {
-          computeRange();
-          requestUpdate();
+      function requestUpdate(force = false) {
+        if (rafId) {
+          return;
+        }
+        rafId = window.requestAnimationFrame(() => {
+          rafId = 0;
+          updateCinematic(force);
         });
-        ro.observe(story);
       }
 
-      window.addEventListener(
-        "resize",
-        () => {
-          computeRange();
-          requestUpdate();
-        },
-        { passive: true }
-      );
-      window.addEventListener(
-        "orientationchange",
-        () => {
-          computeRange();
-          requestUpdate();
-        },
-        { passive: true }
-      );
-
-      if (reducedMotion) {
-        window.addEventListener("scroll", update, { passive: true });
+      // イベント
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduceMotion) {
+        window.addEventListener("scroll", () => updateCinematic(false), { passive: true });
       } else {
-        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("scroll", () => requestUpdate(false), { passive: true });
       }
+      window.addEventListener("resize", () => requestUpdate(true));
+      window.addEventListener("orientationchange", () => requestUpdate(true));
 
-      init();
+      // 初期
+      updateCinematic(true);
     }
   }
 
