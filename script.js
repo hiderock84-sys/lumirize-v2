@@ -276,13 +276,13 @@
       const scene2Id = normalizedSceneOrder[1];
       const scene3Id = normalizedSceneOrder[2];
 
-      const SCENE1_RANGE_END = 0.55;
-      const SCENE2_RANGE_END = 0.8;
-      const S1_TO_S2 = 0.6;
-      const S2_TO_S1 = 0.45;
-      const S2_TO_S3 = 0.88;
-      const S3_TO_S2 = 0.75;
-      const MIN_SCENE1_HOLD_MS = 1000;
+      const SCENE1_RANGE_END = 0.33;
+      const SCENE2_RANGE_END = 0.66;
+      const S1_TO_S2 = 0.35;
+      const S2_TO_S1 = 0.28;
+      const S2_TO_S3 = 0.68;
+      const S3_TO_S2 = 0.6;
+      const MIN_SCENE1_HOLD_MS = 600;
       const PROGRESS_EPSILON = 0.002;
       const DEBUG_SCENE_LOG = false;
 
@@ -355,8 +355,8 @@
         const viewportHeight = window.innerHeight || 1;
         const storyTop = window.scrollY + rect.top;
         const storyBottom = window.scrollY + rect.bottom;
-        const start = storyTop - viewportHeight * 0.28;
-        const end = storyBottom - viewportHeight * 0.42;
+        const start = storyTop - viewportHeight * 0.5;
+        const end = storyBottom - viewportHeight * 0.3;
         const span = Math.max(1, end - start);
         const progress = Math.min(1, Math.max(0, (window.scrollY - start) / span));
         if (Math.abs(progress - lastProgress) < PROGRESS_EPSILON && !reducedMotion) {
