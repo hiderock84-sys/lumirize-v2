@@ -33,6 +33,11 @@ Or via npm: `npm start`. Then open `http://localhost:8080/`.
 | Test           | `npm test` (runs lint) |
 | Dev server     | `npm start`            |
 
+### User preferences
+
+- 「URLを教えて」等の指示には、GitHub操作手順ではなく、Safariで直接開けるウェブURLを返すこと。
+- 本番URL: `https://hiderock84-sys.github.io/lumirize-v2/`（カスタムドメイン: `https://lumirize.com/`）
+
 ### Important caveats
 
 - The site has **no build step** — files are served as-is via GitHub Pages.
