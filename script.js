@@ -12,7 +12,7 @@
   const parallaxState = {
     current: 0,
     target: 0,
-    rafId: 0
+    rafId: 0,
   };
 
   const setHeaderOffset = () => {
@@ -233,7 +233,7 @@
     const top = target.getBoundingClientRect().top + window.scrollY - headerHeight - 14;
     window.scrollTo({
       top: Math.max(0, top),
-      behavior: reducedMotion ? "auto" : "smooth"
+      behavior: reducedMotion ? "auto" : "smooth",
     });
   };
 
@@ -270,15 +270,15 @@
       const normalizedSceneOrder = [
         sceneOrder[0] || "1",
         sceneOrder[1] || sceneOrder[0] || "1",
-        sceneOrder[2] || sceneOrder[sceneOrder.length - 1] || sceneOrder[0] || "1"
+        sceneOrder[2] || sceneOrder[sceneOrder.length - 1] || sceneOrder[0] || "1",
       ];
       const scene1Id = normalizedSceneOrder[0];
       const scene2Id = normalizedSceneOrder[1];
       const scene3Id = normalizedSceneOrder[2];
 
       const SCENE1_RANGE_END = 0.55;
-      const SCENE2_RANGE_END = 0.80;
-      const S1_TO_S2 = 0.60;
+      const SCENE2_RANGE_END = 0.8;
+      const S1_TO_S2 = 0.6;
       const S2_TO_S1 = 0.45;
       const S2_TO_S3 = 0.88;
       const S3_TO_S2 = 0.75;
@@ -375,11 +375,7 @@
         }
 
         const now = window.performance.now();
-        if (
-          currentScene === scene1Id &&
-          nextSceneId === scene2Id &&
-          now - lastSceneActivatedAt < MIN_SCENE1_HOLD_MS
-        ) {
+        if (currentScene === scene1Id && nextSceneId === scene2Id && now - lastSceneActivatedAt < MIN_SCENE1_HOLD_MS) {
           return;
         }
 
@@ -422,7 +418,7 @@
           {
             threshold: [0, 0.05, 0.2],
             root: null,
-            rootMargin: "-6% 0px -6% 0px"
+            rootMargin: "-6% 0px -6% 0px",
           }
         );
         storyObserver.observe(story);
@@ -460,7 +456,7 @@
           `メール: ${email || "未記入"}`,
           "",
           "相談内容:",
-          message
+          message,
         ].join("\n")
       );
 

@@ -1,0 +1,25 @@
+{
+  "name": "lumirize-website",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "株式会社ルミライズ公式サイト — 純HTML/CSS/JSの静的サイト",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "lint": "npm run lint:html && npm run lint:css && npm run lint:js",
+    "lint:html": "htmlhint index.html",
+    "lint:css": "stylelint \"*.css\"",
+    "lint:js": "eslint \"*.js\"",
+    "format": "prettier --write \"*.{html,css,js,json,md}\"",
+    "format:check": "prettier --check \"*.{html,css,js,json,md}\"",
+    "test": "npm run lint"
+  },
+  "devDependencies": {
+    "eslint": "^9.27.0",
+    "globals": "^16.1.0",
+    "stylelint": "^16.19.1",
+    "stylelint-config-standard": "^38.0.0",
+    "htmlhint": "^1.5.0",
+    "prettier": "^3.5.3"
+  }
+}

@@ -3,28 +3,41 @@
 ## Cursor Cloud specific instructions
 
 ### Overview
+
 LUMIRIZE (株式会社ルミライズ) corporate website — a zero-build static site (HTML/CSS/JS) hosted on GitHub Pages.
 
 ### Development Server
-Run the site locally with any static HTTP server:
+
 ```
 python3 -m http.server 8080 --directory /workspace
 ```
-Then open `http://localhost:8080/` in a browser. No build step, no dependencies.
+
+Or via npm: `npm start`. Then open `http://localhost:8080/`.
 
 ### Key files
-- `index.html` — Single-page HTML
-- `styles.css` — All styles
-- `script.js` — Client-side JavaScript (IIFE, vanilla)
-- Image assets at repo root (`hero.jpg`, `scene*.jpg`, `logo-*.png`)
 
-### Lint / Test / Build
-- **No linter configured** — no `package.json`, no ESLint.
-- **No automated tests** — CI only runs `echo "CI is working"`.
-- **No build step** — the site is served directly as static files.
+- `index.html` / `styles.css` / `script.js` — the 3 editable source files (per README rules)
+- Image assets at repo root (`hero.jpg`, `scene*.jpg`, `logo-*.png`)
+- `eslint.config.js`, `.stylelintrc.json`, `.htmlhintrc`, `.prettierrc.json` — linter/formatter configs
+
+### Commands
+
+| Task           | Command                |
+| -------------- | ---------------------- |
+| Lint (all)     | `npm run lint`         |
+| Lint HTML      | `npm run lint:html`    |
+| Lint CSS       | `npm run lint:css`     |
+| Lint JS        | `npm run lint:js`      |
+| Format check   | `npm run format:check` |
+| Format (write) | `npm run format`       |
+| Test           | `npm test` (runs lint) |
+| Dev server     | `npm start`            |
 
 ### Important caveats
-- Do NOT add files outside the 3 editable files (`index.html`, `styles.css`, `script.js`) per README rules.
+
+- The site has **no build step** — files are served as-is via GitHub Pages.
+- Do NOT add source files beyond `index.html`, `styles.css`, `script.js` per README rules.
 - The contact form uses client-side `mailto:` link generation (no backend).
-- Opening `index.html` via `file://` may not work due to browser CORS policies; always use an HTTP server.
-- The cinematic scroll experience relies on `IntersectionObserver`; test in Chrome for best results.
+- Opening `index.html` via `file://` may fail due to browser CORS policies; always use an HTTP server.
+- The cinematic scroll experience relies on `IntersectionObserver`; test in Chrome.
+- CI runs lint + format checks on every push and PR.

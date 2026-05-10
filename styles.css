@@ -131,7 +131,9 @@ img {
   padding: 0 13px;
   cursor: pointer;
   z-index: 1302;
-  transition: background-color 180ms ease, border-color 180ms ease;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease;
 }
 
 .menu-toggle span {
@@ -139,7 +141,9 @@ img {
   border-radius: 2px;
   background: var(--text);
   transform-origin: center;
-  transition: transform 180ms ease, opacity 180ms ease;
+  transition:
+    transform 180ms ease,
+    opacity 180ms ease;
 }
 
 .menu-toggle.is-open {
@@ -171,7 +175,9 @@ img {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 220ms ease, visibility 220ms ease;
+  transition:
+    opacity 220ms ease,
+    visibility 220ms ease;
 }
 
 .site-nav.is-open {
@@ -213,7 +219,10 @@ img {
   border: 1px solid rgba(238, 248, 250, 0.11);
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(25, 200, 198, 0.04));
   color: #eaf8f9;
-  transition: transform 140ms ease, border-color 140ms ease, background-color 140ms ease;
+  transition:
+    transform 140ms ease,
+    border-color 140ms ease,
+    background-color 140ms ease;
 }
 
 .site-nav__link span {
@@ -309,7 +318,9 @@ img {
 .hero-motion-ready .hero-reveal {
   opacity: 0;
   transform: translateY(8px);
-  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  transition:
+    opacity 0.6s ease-out,
+    transform 0.6s ease-out;
 }
 
 .hero-reveal--title {
@@ -467,7 +478,13 @@ p {
   inset: 0;
   pointer-events: none;
   z-index: 1;
-  background: linear-gradient(180deg, rgba(2, 8, 12, 0.28) 0%, rgba(2, 8, 12, 0.08) 30%, rgba(2, 8, 12, 0) 52%, rgba(2, 8, 12, 0.28) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(2, 8, 12, 0.28) 0%,
+    rgba(2, 8, 12, 0.08) 30%,
+    rgba(2, 8, 12, 0) 52%,
+    rgba(2, 8, 12, 0.28) 100%
+  );
 }
 
 .hero__visual img {
@@ -627,7 +644,12 @@ p {
 
 .cinematic__visual[data-active-scene="1"] .cinematic__overlay {
   background:
-    radial-gradient(circle at 50% 45%, rgba(131, 198, 218, 0.12) 0%, rgba(106, 170, 194, 0.06) 30%, rgba(76, 131, 154, 0) 58%),
+    radial-gradient(
+      circle at 50% 45%,
+      rgba(131, 198, 218, 0.12) 0%,
+      rgba(106, 170, 194, 0.06) 30%,
+      rgba(76, 131, 154, 0) 58%
+    ),
     linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(8, 26, 38, 0.25) 48%, rgba(0, 0, 0, 0.35) 100%);
 }
 
@@ -660,7 +682,9 @@ p {
   justify-content: flex-end;
   opacity: 0.48;
   transform: translateY(12px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
 }
 
 .cinematic__block[data-scene].is-active {
@@ -763,7 +787,9 @@ p {
   box-shadow: 0 14px 36px rgba(0, 0, 0, 0.3);
   opacity: 0;
   transform: translateY(10px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
 }
 
 .cinematic__block[data-scene].is-active {
@@ -806,7 +832,10 @@ p {
   font-weight: 700;
   letter-spacing: 0.12em;
   cursor: pointer;
-  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease;
 }
 
 .raw-toggle:hover {
@@ -1192,7 +1221,9 @@ textarea {
 .reveal {
   opacity: 0;
   transform: translateY(14px);
-  transition: opacity 0.55s ease, transform 0.55s ease;
+  transition:
+    opacity 0.55s ease,
+    transform 0.55s ease;
 }
 
 .reveal.is-visible {
@@ -1344,7 +1375,12 @@ textarea {
 
   .cinematic__visual[data-active-scene="1"] .cinematic__overlay {
     background:
-      radial-gradient(circle at 50% 45%, rgba(138, 204, 222, 0.22) 0%, rgba(111, 174, 198, 0.12) 31%, rgba(80, 135, 155, 0) 59%),
+      radial-gradient(
+        circle at 50% 45%,
+        rgba(138, 204, 222, 0.22) 0%,
+        rgba(111, 174, 198, 0.12) 31%,
+        rgba(80, 135, 155, 0) 59%
+      ),
       linear-gradient(180deg, rgba(0, 0, 0, 0.26) 0%, rgba(8, 26, 38, 0.38) 50%, rgba(0, 0, 0, 0.5) 100%);
   }
 }
@@ -1372,7 +1408,6 @@ textarea {
     top: 0.62rem;
     right: 0.62rem;
   }
-
 }
 
 @media (max-width: 899px) {
