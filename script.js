@@ -355,8 +355,8 @@
         const viewportHeight = window.innerHeight || 1;
         const storyTop = window.scrollY + rect.top;
         const storyBottom = window.scrollY + rect.bottom;
-        const start = storyTop - viewportHeight * 0.5;
-        const end = storyBottom - viewportHeight * 0.3;
+        const start = storyTop - viewportHeight * 0.3;
+        const end = storyBottom - viewportHeight * 0.4;
         const span = Math.max(1, end - start);
         const progress = Math.min(1, Math.max(0, (window.scrollY - start) / span));
         if (Math.abs(progress - lastProgress) < PROGRESS_EPSILON && !reducedMotion) {
