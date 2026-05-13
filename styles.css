@@ -573,18 +573,12 @@ p {
 }
 
 .cinematic {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.5rem, 4vw, 2.5rem);
 }
 
-.cinematic__visual {
-  position: sticky;
-  top: calc(var(--header-offset) + 0.5rem);
-  z-index: 1;
-  grid-column: 1;
-  grid-row: 1 / -1;
-  height: min(80vh, 720px);
+.cinematic__scene {
   border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1px solid var(--line);
@@ -592,108 +586,23 @@ p {
   background: #02090b;
 }
 
-.cinematic__img[data-scene] {
-  position: absolute;
-  inset: 0;
+.cinematic__scene-img {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.cinematic__scene-img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center center;
-  opacity: 0;
-  transition: opacity 0.6s ease;
-  z-index: 1;
+  display: block;
 }
 
-.cinematic__img[data-scene].is-active {
-  opacity: 1;
-}
-
-/* JS遅延/停止時でもactive sceneの画像を必ず表示 */
-.cinematic__visual[data-active-scene="1"] .cinematic__img[data-scene="1"],
-.cinematic__visual[data-active-scene="2"] .cinematic__img[data-scene="2"],
-.cinematic__visual[data-active-scene="3"] .cinematic__img[data-scene="3"] {
-  opacity: 1;
-  transform: none;
-}
-
-.cinematic__img--future {
-  object-position: center center;
-  filter: brightness(1.01) contrast(1.01) saturate(0.99);
-}
-
-.cinematic__img--support {
-  object-position: center center;
-  filter: brightness(1.01) contrast(1.01) saturate(1);
-}
-
-.cinematic__img--past {
-  object-position: center center;
-  filter: brightness(1.05) contrast(1.05) saturate(0.96);
-}
-
-.cinematic__overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  background: linear-gradient(180deg, rgba(8, 30, 42, 0.12), rgba(0, 0, 0, 0.3));
-  transition: background 0.6s ease;
-}
-
-.cinematic__visual[data-active-scene="1"] .cinematic__overlay {
-  background:
-    radial-gradient(
-      circle at 50% 45%,
-      rgba(131, 198, 218, 0.12) 0%,
-      rgba(106, 170, 194, 0.06) 30%,
-      rgba(76, 131, 154, 0) 58%
-    ),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(8, 26, 38, 0.25) 48%, rgba(0, 0, 0, 0.35) 100%);
-}
-
-.cinematic__visual[data-active-scene="2"] .cinematic__overlay {
-  background: linear-gradient(180deg, rgba(12, 59, 66, 0.18), rgba(5, 36, 40, 0.26) 52%, rgba(0, 0, 0, 0.38));
-}
-
-.cinematic__visual[data-active-scene="3"] .cinematic__overlay {
-  background: linear-gradient(180deg, rgba(9, 19, 37, 0.16), rgba(4, 8, 16, 0.28) 46%, rgba(0, 0, 0, 0.44));
-}
-
-.cinematic__content {
-  position: relative;
-  z-index: 6;
-  grid-column: 1;
-  grid-row: 1 / -1;
-  pointer-events: none;
-}
-
-.cinematic__block[data-scene] {
-  min-height: min(80vh, 720px);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: clamp(0.75rem, 2vw, 1.25rem);
-  pointer-events: auto;
-}
-
-.cinematic__block[data-scene] .scene-index,
-.cinematic__block[data-scene] .cinematic__line {
-  max-width: min(760px, 100%);
-  padding: clamp(0.6rem, 1.5vw, 0.9rem) clamp(0.8rem, 2vw, 1.2rem);
-  border-radius: 12px;
-  background: linear-gradient(180deg, rgba(4, 12, 16, 0.55), rgba(4, 12, 16, 0.82));
-  backdrop-filter: blur(10px);
-}
-
-.cinematic__block[data-scene] .scene-index {
-  display: inline-block;
-  width: fit-content;
-  border-radius: 8px;
-  margin-bottom: 0.3rem;
-}
-
-.cinematic__block[data-scene].is-active {
-  opacity: 1;
+.cinematic__scene-text {
+  padding: clamp(1rem, 3vw, 1.6rem);
 }
 
 .scene-index {
@@ -709,10 +618,10 @@ p {
   color: #f3fcfc;
   font-size: clamp(1.06rem, 2.35vw, 1.7rem);
   line-height: 1.58;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.65);
 }
 
 .cinematic__line--sub {
+  margin-top: 0.62rem;
   font-size: clamp(0.98rem, 1.92vw, 1.26rem);
   line-height: 1.64;
 }
@@ -726,17 +635,10 @@ p {
   font-weight: 800;
 }
 
-.is-raw .cinematic__img[data-scene] {
-  filter: none !important;
-}
-
-.is-raw .cinematic__overlay {
-  opacity: 0 !important;
-}
-
-.is-raw .cinematic__block[data-scene] {
-  background: linear-gradient(180deg, rgba(2, 10, 14, 0.58), rgba(2, 10, 14, 0.74));
-  border-color: rgba(225, 244, 246, 0.36);
+@media (min-width: 900px) {
+  .cinematic__scene-img {
+    aspect-ratio: 16 / 9;
+  }
 }
 
 .raw-toggle {
@@ -1171,12 +1073,6 @@ textarea {
     gap: 2.4rem;
   }
 
-  .cinematic {
-    grid-template-columns: 1fr;
-    align-items: start;
-    gap: 0;
-  }
-
   .cards {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -1207,42 +1103,6 @@ textarea {
   }
 }
 
-@media (min-width: 1024px) {
-  .cinematic__media {
-    height: min(92vh, 920px);
-    max-height: 92vh;
-  }
-
-  .cinematic__img[data-scene] {
-    object-fit: cover;
-    object-position: center center;
-  }
-
-  .cinematic__img--past {
-    object-position: center center;
-    filter: brightness(1.08) contrast(1.06) saturate(0.96);
-  }
-
-  .cinematic__img--support {
-    object-position: center center;
-  }
-
-  .cinematic__img--future {
-    object-position: center center;
-  }
-
-  .cinematic__visual[data-active-scene="1"] .cinematic__overlay {
-    background:
-      radial-gradient(
-        circle at 50% 45%,
-        rgba(138, 204, 222, 0.22) 0%,
-        rgba(111, 174, 198, 0.12) 31%,
-        rgba(80, 135, 155, 0) 59%
-      ),
-      linear-gradient(180deg, rgba(0, 0, 0, 0.26) 0%, rgba(8, 26, 38, 0.38) 50%, rgba(0, 0, 0, 0.5) 100%);
-  }
-}
-
 @media (max-width: 1023px) {
   .section--story .container {
     width: min(100%, calc(100% - 1rem));
@@ -1250,17 +1110,6 @@ textarea {
 
   .section--story .section-head {
     margin-bottom: 1rem;
-  }
-
-  .raw-toggle {
-    top: 0.62rem;
-    right: 0.62rem;
-  }
-}
-
-@media (max-width: 899px) {
-  .cinematic__block[data-scene] {
-    min-height: 0;
   }
 }
 
@@ -1332,23 +1181,8 @@ textarea {
     scroll-behavior: auto !important;
   }
 
-  .cinematic__visual {
-    position: relative;
-    top: 0;
-  }
-
   .hero__bg-parallax {
     transform: none !important;
-  }
-
-  .cinematic__visual {
-    transform: none !important;
-  }
-
-  .cinematic__img[data-scene],
-  .cinematic__block[data-scene],
-  .cinematic__overlay {
-    transition: none !important;
   }
 
   .reveal {

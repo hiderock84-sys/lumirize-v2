@@ -5,7 +5,6 @@
   const menuToggle = document.querySelector(".menu-toggle");
   const nav = document.querySelector("#site-nav");
   const rawToggle = document.querySelector("#raw-toggle");
-  const story = document.querySelector("#story");
   const heroParallaxLayer = document.querySelector(".hero__bg-parallax");
   const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
   let reducedMotion = motionQuery.matches;
@@ -259,54 +258,6 @@
   revealTargets.forEach((el) => {
     el.classList.add("is-visible");
   });
-
-  if (story) {
-    const sceneVisual = story.querySelector(".cinematic__visual");
-    const sceneImages = Array.from(story.querySelectorAll(".cinematic__img[data-scene]"));
-    const sceneBlocks = Array.from(story.querySelectorAll(".cinematic__block[data-scene]"));
-
-    if (sceneImages.length > 0 && sceneBlocks.length > 0) {
-      let currentScene = "1";
-
-      const activateScene = (sceneId) => {
-        if (sceneId === currentScene) {
-          return;
-        }
-        currentScene = sceneId;
-        if (sceneVisual) {
-          sceneVisual.setAttribute("data-active-scene", sceneId);
-        }
-        sceneImages.forEach((image) => {
-          image.classList.toggle("is-active", image.dataset.scene === sceneId);
-        });
-        sceneBlocks.forEach((block) => {
-          block.setAttribute("aria-current", block.dataset.scene === sceneId ? "true" : "false");
-        });
-      };
-
-      const blockObserver = new IntersectionObserver(
-        (entries) => {
-          let bestEntry = null;
-          let bestRatio = 0;
-          entries.forEach((entry) => {
-            if (entry.isIntersecting && entry.intersectionRatio > bestRatio) {
-              bestRatio = entry.intersectionRatio;
-              bestEntry = entry;
-            }
-          });
-          if (bestEntry && bestEntry.target.dataset.scene) {
-            activateScene(bestEntry.target.dataset.scene);
-          }
-        },
-        {
-          threshold: [0, 0.25, 0.5, 0.75],
-          rootMargin: "-30% 0px -30% 0px",
-        }
-      );
-
-      sceneBlocks.forEach((block) => blockObserver.observe(block));
-    }
-  }
 
   const form = document.querySelector("#contact-form");
   if (form) {
