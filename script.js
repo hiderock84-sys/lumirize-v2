@@ -266,39 +266,13 @@
     const sceneBlocks = Array.from(story.querySelectorAll(".cinematic__block[data-scene]"));
 
     if (sceneImages.length > 0 && sceneBlocks.length > 0) {
-      const sceneOrder = sceneBlocks.map((block) => block.dataset.scene).filter(Boolean);
-      const normalizedSceneOrder = [
-        sceneOrder[0] || "1",
-        sceneOrder[1] || sceneOrder[0] || "1",
-        sceneOrder[2] || sceneOrder[sceneOrder.length - 1] || sceneOrder[0] || "1",
-      ];
-      const scene1Id = normalizedSceneOrder[0];
-      const scene2Id = normalizedSceneOrder[1];
-      const scene3Id = normalizedSceneOrder[2];
+      let currentScene = "1";
 
-      const SCENE1_RANGE_END = 0.33;
-      const SCENE2_RANGE_END = 0.66;
-      const S1_TO_S2 = 0.35;
-      const S2_TO_S1 = 0.28;
-      const S2_TO_S3 = 0.68;
-      const S3_TO_S2 = 0.6;
-      const MIN_SCENE1_HOLD_MS = 600;
-      const PROGRESS_EPSILON = 0.002;
-      const DEBUG_SCENE_LOG = false;
-
-      let currentScene = scene1Id;
-      let lastSceneActivatedAt = window.performance.now();
-      let lastProgress = -1;
-      let storyIsVisible = false;
-      let cinematicRafId = 0;
-      let cinematicNeedsUpdate = false;
-
-      const activateScene = (sceneId, force = false) => {
-        if (!force && sceneId === currentScene) {
+      const activateScene = (sceneId) => {
+        if (sceneId === currentScene) {
           return;
         }
         currentScene = sceneId;
-        lastSceneActivatedAt = window.performance.now();
         if (sceneVisual) {
           sceneVisual.setAttribute("data-active-scene", sceneId);
         }
@@ -306,129 +280,31 @@
           image.classList.toggle("is-active", image.dataset.scene === sceneId);
         });
         sceneBlocks.forEach((block) => {
-          const active = block.dataset.scene === sceneId;
-          block.classList.toggle("is-active", active);
-          block.setAttribute("aria-current", active ? "true" : "false");
+          block.setAttribute("aria-current", block.dataset.scene === sceneId ? "true" : "false");
         });
-        if (DEBUG_SCENE_LOG) {
-          console.log(`currentScene=${sceneId}`);
-        }
       };
 
-      const sceneByProgress = (progress) => {
-        if (progress < SCENE1_RANGE_END) {
-          return scene1Id;
-        }
-        if (progress < SCENE2_RANGE_END) {
-          return scene2Id;
-        }
-        return scene3Id;
-      };
-
-      const sceneByHysteresis = (progress) => {
-        if (currentScene === scene1Id) {
-          return progress > S1_TO_S2 ? scene2Id : scene1Id;
-        }
-        if (currentScene === scene2Id) {
-          if (progress < S2_TO_S1) {
-            return scene1Id;
+      const blockObserver = new IntersectionObserver(
+        (entries) => {
+          let bestEntry = null;
+          let bestRatio = 0;
+          entries.forEach((entry) => {
+            if (entry.isIntersecting && entry.intersectionRatio > bestRatio) {
+              bestRatio = entry.intersectionRatio;
+              bestEntry = entry;
+            }
+          });
+          if (bestEntry && bestEntry.target.dataset.scene) {
+            activateScene(bestEntry.target.dataset.scene);
           }
-          if (progress > S2_TO_S3) {
-            return scene3Id;
-          }
-          return scene2Id;
+        },
+        {
+          threshold: [0, 0.25, 0.5, 0.75],
+          rootMargin: "-30% 0px -30% 0px",
         }
-        return progress < S3_TO_S2 ? scene2Id : scene3Id;
-      };
+      );
 
-      const updateCinematicByScroll = () => {
-        cinematicRafId = 0;
-        if (!cinematicNeedsUpdate) {
-          return;
-        }
-        cinematicNeedsUpdate = false;
-        if (!storyIsVisible) {
-          return;
-        }
-
-        const rect = story.getBoundingClientRect();
-        const viewportHeight = window.innerHeight || 1;
-        const storyTop = window.scrollY + rect.top;
-        const storyBottom = window.scrollY + rect.bottom;
-        const start = storyTop - viewportHeight * 0.3;
-        const end = storyBottom - viewportHeight * 0.4;
-        const span = Math.max(1, end - start);
-        const progress = Math.min(1, Math.max(0, (window.scrollY - start) / span));
-        if (Math.abs(progress - lastProgress) < PROGRESS_EPSILON && !reducedMotion) {
-          return;
-        }
-        lastProgress = progress;
-
-        if (reducedMotion) {
-          activateScene(sceneByProgress(progress));
-          return;
-        }
-
-        const nextSceneId = sceneByHysteresis(progress);
-        if (nextSceneId === currentScene) {
-          return;
-        }
-
-        const now = window.performance.now();
-        if (currentScene === scene1Id && nextSceneId === scene2Id && now - lastSceneActivatedAt < MIN_SCENE1_HOLD_MS) {
-          return;
-        }
-
-        activateScene(nextSceneId);
-      };
-
-      const requestCinematicUpdate = () => {
-        cinematicNeedsUpdate = true;
-        if (!storyIsVisible) {
-          return;
-        }
-        if (cinematicRafId) {
-          return;
-        }
-        cinematicRafId = window.requestAnimationFrame(updateCinematicByScroll);
-      };
-
-      const setStoryVisibility = (isVisible) => {
-        if (storyIsVisible === isVisible) {
-          return;
-        }
-        storyIsVisible = isVisible;
-        if (storyIsVisible) {
-          lastProgress = -1;
-          activateScene(scene1Id, true);
-          requestCinematicUpdate();
-        }
-      };
-
-      if ("IntersectionObserver" in window) {
-        const storyObserver = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.target !== story) {
-                return;
-              }
-              setStoryVisibility(entry.isIntersecting && entry.intersectionRatio > 0.05);
-            });
-          },
-          {
-            threshold: [0, 0.05, 0.2],
-            root: null,
-            rootMargin: "-6% 0px -6% 0px",
-          }
-        );
-        storyObserver.observe(story);
-      } else {
-        setStoryVisibility(true);
-      }
-
-      window.addEventListener("scroll", requestCinematicUpdate, { passive: true });
-      window.addEventListener("resize", requestCinematicUpdate);
-      window.addEventListener("orientationchange", requestCinematicUpdate, { passive: true });
+      sceneBlocks.forEach((block) => blockObserver.observe(block));
     }
   }
 
