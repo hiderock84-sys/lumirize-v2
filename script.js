@@ -259,6 +259,28 @@
     el.classList.add("is-visible");
   });
 
+  const cinematicVisual = document.querySelector(".cinematic__visual");
+  const cinematicBlocks = Array.from(document.querySelectorAll(".cinematic__block[data-scene]"));
+
+  if (cinematicVisual && cinematicBlocks.length > 0) {
+    const setScene = (id) => {
+      cinematicVisual.setAttribute("data-active-scene", id);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.4) {
+            setScene(entry.target.dataset.scene);
+          }
+        });
+      },
+      { threshold: [0, 0.4, 0.8], rootMargin: "-20% 0px -20% 0px" }
+    );
+
+    cinematicBlocks.forEach((b) => observer.observe(b));
+  }
+
   const form = document.querySelector("#contact-form");
   if (form) {
     form.addEventListener("submit", (event) => {
