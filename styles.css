@@ -114,7 +114,7 @@ img {
 }
 
 .brand img {
-  width: clamp(170px, 20vw, 224px);
+  width: clamp(190px, 24vw, 240px);
   height: auto;
 }
 
@@ -648,7 +648,7 @@ p {
 
 .cinematic__block-inner {
   max-width: min(760px, 100%);
-  padding: clamp(0.9rem, 2.4vw, 1.35rem);
+  padding: clamp(1.1rem, 3vw, 1.6rem);
   border-radius: var(--radius);
   border: 1px solid rgba(214, 241, 243, 0.28);
   background: linear-gradient(180deg, rgba(4, 12, 16, 0.55), rgba(4, 12, 16, 0.82));
@@ -657,9 +657,9 @@ p {
 }
 
 .scene-index {
-  margin: 0 0 0.5rem;
+  margin: 0 0 0.6rem;
   color: #c9ecee;
-  font-size: 0.73rem;
+  font-size: 0.8rem;
   letter-spacing: 0.16em;
   font-weight: 600;
 }
@@ -667,14 +667,14 @@ p {
 .cinematic__line {
   margin: 0;
   color: #f3fcfc;
-  font-size: clamp(1.06rem, 2.35vw, 1.7rem);
-  line-height: 1.58;
+  font-size: clamp(1.18rem, 2.8vw, 1.9rem);
+  line-height: 1.6;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.65);
 }
 
 .cinematic__line--sub {
-  margin-top: 0.62rem;
-  font-size: clamp(0.98rem, 1.92vw, 1.26rem);
+  margin-top: 0.7rem;
+  font-size: clamp(1.02rem, 2.2vw, 1.35rem);
   line-height: 1.64;
 }
 
