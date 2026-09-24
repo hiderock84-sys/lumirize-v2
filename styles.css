@@ -783,6 +783,57 @@ p {
   font-weight: 600;
 }
 
+.representative {
+  margin-top: clamp(1.5rem, 4vw, 2.5rem);
+  padding: clamp(1.2rem, 3vw, 2rem);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: rgba(16, 42, 49, 0.6);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+}
+
+.representative__header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.representative__header h3 {
+  margin-bottom: 0.3rem;
+}
+
+.representative__name {
+  margin: 0;
+  color: var(--teal);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.representative__body p {
+  color: #d8edef;
+  font-size: clamp(0.9rem, 2.2vw, 0.98rem);
+  line-height: 1.9;
+  margin: 0 0 1rem;
+}
+
+.representative__body h4 {
+  margin: 1.5rem 0 0.8rem;
+  color: #eef8fa;
+  font-size: clamp(1rem, 2.4vw, 1.15rem);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.representative__closing {
+  margin: 1.5rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line-soft);
+  color: #f2fcfd;
+  font-size: clamp(1.05rem, 2.5vw, 1.2rem);
+  font-weight: 700;
+  line-height: 1.6;
+}
+
 .cards {
   display: grid;
   gap: 1rem;
