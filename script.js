@@ -270,12 +270,12 @@
     const sceneObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.25) {
             setScene(entry.target.dataset.scene);
           }
         });
       },
-      { threshold: [0, 0.5, 0.8], rootMargin: "-35% 0px -35% 0px" }
+      { threshold: [0, 0.25, 0.5], rootMargin: "-15% 0px -15% 0px" }
     );
 
     const slideObserver = new IntersectionObserver(
