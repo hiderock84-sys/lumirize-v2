@@ -267,7 +267,7 @@
       cinematicVisual.setAttribute("data-active-scene", id);
     };
 
-    const observer = new IntersectionObserver(
+    const sceneObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && entry.intersectionRatio >= 0.4) {
@@ -278,7 +278,19 @@
       { threshold: [0, 0.4, 0.8], rootMargin: "-20% 0px -20% 0px" }
     );
 
-    cinematicBlocks.forEach((b) => observer.observe(b));
+    const slideObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          entry.target.classList.toggle("is-visible", entry.isIntersecting);
+        });
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -8% 0px" }
+    );
+
+    cinematicBlocks.forEach((b) => {
+      sceneObserver.observe(b);
+      slideObserver.observe(b);
+    });
   }
 
   const form = document.querySelector("#contact-form");
