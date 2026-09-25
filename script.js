@@ -1,327 +1,192 @@
+// Preserve links shared before the four-page migration.
 (() => {
-  const root = document.documentElement;
-  const body = document.body;
-  const header = document.querySelector(".site-header");
-  const menuToggle = document.querySelector(".menu-toggle");
-  const nav = document.querySelector("#site-nav");
-  const rawToggle = document.querySelector("#raw-toggle");
-  const heroParallaxLayer = document.querySelector(".hero__bg-parallax");
-  const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-  let reducedMotion = motionQuery.matches;
-  const parallaxState = {
-    current: 0,
-    target: 0,
-    rafId: 0,
+  if (!/(?:\/|\/index\.html)$/.test(window.location.pathname)) return;
+  const targets = {
+    "start-top": "#main",
+    top: "#main",
+    "story-title": "#story",
+    "about-us": "about.html",
+    services: "support.html#services",
+    target: "support.html#for-you",
+    impact: "about.html",
+    support: "support.html#housing-first",
+    process: "contact.html#flow",
+    faq: "contact.html#faq",
+    about: "about.html#company",
+    contact: "contact.html",
+    "contact-form": "contact.html#contact-form",
   };
+  const target = targets[window.location.hash.slice(1)];
+  if (target) window.location.replace(target);
+})();
 
-  const setHeaderOffset = () => {
-    const headerHeight = header ? header.offsetHeight : 78;
-    root.style.setProperty("--header-offset", `${headerHeight + 14}px`);
-  };
-
-  const RAW_MODE_STORAGE_KEY = "lumirize.rawMode";
-  const syncRawMode = (enabled) => {
-    body.classList.toggle("is-raw", enabled);
-    if (rawToggle) {
-      rawToggle.classList.toggle("is-active", enabled);
-      rawToggle.setAttribute("aria-pressed", String(enabled));
-    }
-  };
-
-  if (rawToggle) {
-    let initialRawMode = false;
-    try {
-      initialRawMode = window.localStorage.getItem(RAW_MODE_STORAGE_KEY) === "1";
-    } catch (_error) {
-      initialRawMode = false;
-    }
-    syncRawMode(initialRawMode);
-
-    rawToggle.addEventListener("click", () => {
-      const nextRawMode = !body.classList.contains("is-raw");
-      syncRawMode(nextRawMode);
-      try {
-        window.localStorage.setItem(RAW_MODE_STORAGE_KEY, nextRawMode ? "1" : "0");
-      } catch (_error) {
-        // ストレージ不可環境では永続化せず継続
-      }
+(() => {
+  "use strict";
+  const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const dialog = document.querySelector("#site-menu");
+  const toggle = document.querySelector("[data-menu-open]");
+  function closeMenu() {
+    if (dialog?.open) dialog.close();
+  }
+  if (dialog && toggle) {
+    toggle.addEventListener("click", () => {
+      dialog.showModal();
+      toggle.setAttribute("aria-expanded", "true");
+      document.body.style.overflow = "hidden";
     });
+    dialog.querySelector("[data-menu-close]").addEventListener("click", closeMenu);
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog && event.clientX < dialog.getBoundingClientRect().left) closeMenu();
+      if (event.target.closest("a")) closeMenu();
+    });
+    dialog.addEventListener("close", () => {
+      document.body.style.overflow = "";
+      toggle.setAttribute("aria-expanded", "false");
+    });
+    window.addEventListener("pageshow", closeMenu);
   }
 
-  const setParallaxPosition = (value) => {
-    if (heroParallaxLayer) {
-      heroParallaxLayer.style.transform = `translate3d(0, ${value}px, 0)`;
-    }
-  };
-
-  const renderParallax = () => {
-    if (reducedMotion) {
-      parallaxState.current = 0;
-      parallaxState.target = 0;
-      parallaxState.rafId = 0;
-      setParallaxPosition(0);
-      return;
-    }
-
-    parallaxState.current += (parallaxState.target - parallaxState.current) * 0.16;
-    setParallaxPosition(parallaxState.current);
-
-    if (Math.abs(parallaxState.target - parallaxState.current) > 0.04) {
-      parallaxState.rafId = window.requestAnimationFrame(renderParallax);
-    } else {
-      parallaxState.current = parallaxState.target;
-      setParallaxPosition(parallaxState.current);
-      parallaxState.rafId = 0;
-    }
-  };
-
-  const scheduleParallax = () => {
-    if (reducedMotion) {
-      if (parallaxState.rafId) {
-        window.cancelAnimationFrame(parallaxState.rafId);
-        parallaxState.rafId = 0;
-      }
-      setParallaxPosition(0);
-      return;
-    }
-
-    const maxShift = window.innerHeight * 0.02;
-    parallaxState.target = Math.min(maxShift, window.scrollY * 0.01);
-    if (!parallaxState.rafId) {
-      parallaxState.rafId = window.requestAnimationFrame(renderParallax);
-    }
-  };
-
-  const heroRevealTargets = Array.from(document.querySelectorAll(".hero-reveal"));
-  let heroRevealPlayed = false;
-  const runHeroReveal = () => {
-    if (heroRevealPlayed || heroRevealTargets.length === 0) {
-      return;
-    }
-    heroRevealPlayed = true;
-
-    if (reducedMotion) {
-      heroRevealTargets.forEach((el) => {
-        el.classList.add("is-in");
-      });
-      return;
-    }
-
-    body.classList.add("hero-motion-ready");
-    window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => {
-        heroRevealTargets.forEach((el) => {
-          el.classList.add("is-in");
-        });
-      });
-    });
-  };
-
-  const syncMotionPreference = (event) => {
-    reducedMotion = event.matches;
-    if (reducedMotion) {
-      document.querySelectorAll(".reveal").forEach((el) => {
-        el.classList.add("is-visible");
-      });
-      heroRevealTargets.forEach((el) => {
-        el.classList.add("is-in");
-      });
-      scheduleParallax();
-      return;
-    }
-
-    scheduleParallax();
-  };
-
-  if (typeof motionQuery.addEventListener === "function") {
-    motionQuery.addEventListener("change", syncMotionPreference);
-  } else if (typeof motionQuery.addListener === "function") {
-    motionQuery.addListener(syncMotionPreference);
-  }
-
-  document.addEventListener("DOMContentLoaded", runHeroReveal, { once: true });
-  if (document.readyState !== "loading") {
-    runHeroReveal();
-  }
-
-  setHeaderOffset();
-  window.addEventListener("resize", setHeaderOffset);
-  window.addEventListener("resize", scheduleParallax);
-  window.addEventListener("scroll", scheduleParallax, { passive: true });
-  scheduleParallax();
-
-  const closeMenu = () => {
-    if (!menuToggle || !nav) {
-      return;
-    }
-    menuToggle.setAttribute("aria-expanded", "false");
-    menuToggle.setAttribute("aria-label", "メニューを開く");
-    menuToggle.classList.remove("is-open");
-    nav.classList.remove("is-open");
-    body.classList.remove("menu-open");
-  };
-
-  if (menuToggle && nav) {
-    menuToggle.addEventListener("click", () => {
-      const nextExpanded = menuToggle.getAttribute("aria-expanded") !== "true";
-      menuToggle.setAttribute("aria-expanded", String(nextExpanded));
-      menuToggle.setAttribute("aria-label", nextExpanded ? "メニューを閉じる" : "メニューを開く");
-      menuToggle.classList.toggle("is-open", nextExpanded);
-      nav.classList.toggle("is-open", nextExpanded);
-      body.classList.toggle("menu-open", nextExpanded);
-    });
-
-    nav.addEventListener("click", (event) => {
-      if (event.target === nav) {
-        closeMenu();
-        return;
-      }
-      const link = event.target.closest("a");
-      if (link) {
-        closeMenu();
-      }
-    });
-
-    document.addEventListener("click", (event) => {
-      if (!nav.classList.contains("is-open")) {
-        return;
-      }
-      const target = event.target;
-      if (!nav.contains(target) && !menuToggle.contains(target)) {
-        closeMenu();
-      }
-    });
-
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") {
-        closeMenu();
-      }
-    });
-
-    const desktopQuery = window.matchMedia("(min-width: 900px)");
-    const onDesktop = (event) => {
-      if (event.matches) {
-        closeMenu();
-      }
-    };
-
-    if (typeof desktopQuery.addEventListener === "function") {
-      desktopQuery.addEventListener("change", onDesktop);
-    } else if (typeof desktopQuery.addListener === "function") {
-      desktopQuery.addListener(onDesktop);
-    }
-
-    // iOSのページ復帰・再読込で状態が残るケースを防ぐ
-    window.addEventListener("pageshow", () => {
-      closeMenu();
-    });
-  }
-
-  closeMenu();
-
-  const scrollToAnchor = (id) => {
-    if (!id || id === "#") {
-      return;
-    }
-    const target = document.querySelector(id);
-    if (!target) {
-      return;
-    }
-
-    const headerHeight = header ? header.offsetHeight : 78;
-    const top = target.getBoundingClientRect().top + window.scrollY - headerHeight - 14;
-    window.scrollTo({
-      top: Math.max(0, top),
-      behavior: reducedMotion ? "auto" : "smooth",
-    });
-  };
-
-  document.addEventListener("click", (event) => {
-    const anchor = event.target.closest('a[href^="#"]');
-    if (!anchor) {
-      return;
-    }
-    const href = anchor.getAttribute("href");
-    if (!href || href === "#") {
-      return;
-    }
-    const target = document.querySelector(href);
-    if (!target) {
-      return;
-    }
-    event.preventDefault();
-    closeMenu();
-    scrollToAnchor(href);
-  });
-
-  const revealTargets = Array.from(document.querySelectorAll(".reveal"));
-  revealTargets.forEach((el) => {
-    el.classList.add("is-visible");
-  });
-
-  const cinematicVisual = document.querySelector(".cinematic__visual");
-  const cinematicBlocks = Array.from(document.querySelectorAll(".cinematic__block[data-scene]"));
-
-  if (cinematicVisual && cinematicBlocks.length > 0) {
-    const setScene = (id) => {
-      cinematicVisual.setAttribute("data-active-scene", id);
-    };
-
-    const sceneObserver = new IntersectionObserver(
+  const reveals = [...document.querySelectorAll("[data-reveal]")];
+  let observer;
+  if (!media.matches && "IntersectionObserver" in window) {
+    observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.25) {
-            setScene(entry.target.dataset.scene);
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
           }
         });
       },
-      { threshold: [0, 0.25, 0.5], rootMargin: "-15% 0px -15% 0px" }
+      { threshold: 0.08, rootMargin: "0px 0px -20px 0px" }
     );
-
-    const slideObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          entry.target.classList.toggle("is-visible", entry.isIntersecting);
-        });
-      },
-      { threshold: 0.15, rootMargin: "0px 0px -8% 0px" }
-    );
-
-    cinematicBlocks.forEach((b) => {
-      sceneObserver.observe(b);
-      slideObserver.observe(b);
+    reveals.forEach((el) => {
+      el.classList.add("reveal-ready");
+      observer.observe(el);
     });
   }
+
+  const story = document.querySelector("[data-story]");
+  const stage = story?.querySelector(".story-stage");
+  const scenes = story ? [...story.querySelectorAll(".scene")] : [];
+  const dots = story ? [...story.querySelectorAll("[data-scene-go]")] : [];
+  const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+  const smooth = (start, end, value) => {
+    const t = clamp((value - start) / (end - start), 0, 1);
+    return t * t * (3 - 2 * t);
+  };
+  const sceneParts = scenes.map((scene) => ({
+    photo: scene.querySelector("img"),
+    copy: scene.querySelector(".scene-copy"),
+    track: scene.querySelector(".scene-text-window"),
+    trackHeight: 0,
+    copyHeight: 0,
+  }));
+  let frame = 0;
+  let headerHeight = 68;
+  function syncDimensions() {
+    headerHeight = document.querySelector(".site-header")?.getBoundingClientRect().height || 68;
+    sceneParts.forEach((part) => {
+      part.trackHeight = part.track.clientHeight;
+      part.copyHeight = part.copy.offsetHeight;
+    });
+    requestMotion();
+  }
+  function drawStory() {
+    frame = 0;
+    if (!story || !stage || media.matches) return;
+    const rect = story.getBoundingClientRect();
+    const distance = Math.max(1, story.offsetHeight - stage.offsetHeight);
+    const progress = clamp((headerHeight - rect.top) / distance, 0, 1);
+    const pos = progress * 3;
+    const cross1 = smooth(0.84, 1.16, pos);
+    const cross2 = smooth(1.84, 2.16, pos);
+    // Keep the previous photo opaque beneath the incoming one: no dark flash.
+    const weights = [1, cross1, cross2];
+    const current = pos < 1 ? 0 : pos < 2 ? 1 : 2;
+    sceneParts.forEach((part, i) => {
+      const local = clamp(pos - i, 0, 1);
+      part.photo.style.opacity = weights[i].toFixed(3);
+      part.photo.style.zIndex = String(i + 1);
+      part.photo.style.transform =
+        "translate3d(0," + ((0.5 - local) * 2.4).toFixed(3) + "%,0) scale(" + (1.055 - local * 0.02).toFixed(4) + ")";
+      // Each message enters below the frame and leaves above it, including
+      // the last one. Text stays above the photos throughout the handoff.
+      const start = part.trackHeight + 16;
+      const end = -part.copyHeight - 16;
+      const y = start + (end - start) * local;
+      part.copy.style.transform = "translate3d(0," + y.toFixed(1) + "px,0)";
+    });
+    dots.forEach((dot, i) => dot.setAttribute("aria-current", String(i === current)));
+  }
+  function requestMotion() {
+    if (!frame && story && !media.matches) frame = requestAnimationFrame(drawStory);
+  }
+  function configureMotion() {
+    if (story) {
+      story.classList.toggle("motion-enabled", !media.matches);
+      if (media.matches)
+        scenes.forEach((scene) => {
+          scene.style.opacity = "";
+          scene.style.zIndex = "";
+          scene.querySelector("img").style.transform = "";
+          scene.querySelector("img").style.opacity = "";
+          scene.querySelector("img").style.zIndex = "";
+          scene.querySelector(".scene-copy").style.transform = "";
+          scene.querySelector(".scene-copy").style.opacity = "";
+        });
+      else syncDimensions();
+    }
+    if (media.matches) reveals.forEach((el) => el.classList.add("is-visible"));
+  }
+  dots.forEach((dot) =>
+    dot.addEventListener("click", () => {
+      const i = Number(dot.dataset.sceneGo);
+      const distance = Math.max(0, story.offsetHeight - stage.offsetHeight);
+      const y =
+        window.scrollY + story.getBoundingClientRect().top - headerHeight + distance * ((i + 0.5) / scenes.length);
+      window.scrollTo({ top: y, behavior: media.matches ? "auto" : "smooth" });
+    })
+  );
+  configureMotion();
+  window.addEventListener("scroll", requestMotion, { passive: true });
+  window.addEventListener("resize", syncDimensions, { passive: true });
+  window.addEventListener("pageshow", syncDimensions);
+  document.fonts?.ready.then(syncDimensions);
+  if (media.addEventListener) media.addEventListener("change", configureMotion);
+  else media.addListener(configureMotion);
 
   const form = document.querySelector("#contact-form");
-  if (form) {
+  if (form)
     form.addEventListener("submit", (event) => {
       event.preventDefault();
-      const formData = new FormData(form);
-      const name = String(formData.get("name") || "").trim();
-      const email = String(formData.get("email") || "").trim();
-      const type = String(formData.get("type") || "").trim();
-      const message = String(formData.get("message") || "").trim();
-
-      if (!type || !message) {
+      if (!form.reportValidity()) return;
+      const data = new FormData(form);
+      const kind = String(data.get("type") || "").trim();
+      const message = String(data.get("message") || "").trim();
+      const messageField = form.querySelector('[name="message"]');
+      if (!message) {
+        messageField.setCustomValidity("ご相談内容を入力してください。");
+        messageField.reportValidity();
         return;
       }
-
-      const subject = encodeURIComponent(`[ルミライズ無料相談] ${type}`);
-      const body = encodeURIComponent(
-        [
-          "株式会社ルミライズ 御中",
-          "",
-          `相談種別: ${type}`,
-          `お名前: ${name || "未記入"}`,
-          `メール: ${email || "未記入"}`,
-          "",
-          "相談内容:",
-          message,
-        ].join("\n")
-      );
-
-      window.location.href = `mailto:info@lumirize.com?subject=${subject}&body=${body}`;
+      const name = String(data.get("name") || "").trim() || "未記入";
+      const email = String(data.get("email") || "").trim() || "未記入";
+      const subject = "[ルミライズ無料相談] " + kind;
+      const body = [
+        "株式会社ルミライズ 御中",
+        "",
+        "相談種別: " + kind,
+        "お名前: " + name,
+        "メールアドレス: " + email,
+        "",
+        "相談内容:",
+        message,
+      ].join("\n");
+      document.querySelector("#form-status").textContent =
+        "メールアプリで宛先と内容をご確認のうえ、送信してください。開かない場合は、下のメールアドレスまたはお電話からご相談ください。";
+      window.location.href =
+        "mailto:info@lumirize.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
     });
-  }
+  form?.querySelector('[name="message"]').addEventListener("input", (event) => event.target.setCustomValidity(""));
 })();
