@@ -25,24 +25,38 @@
   const media = window.matchMedia("(prefers-reduced-motion: reduce)");
   const dialog = document.querySelector("#site-menu");
   const toggle = document.querySelector("[data-menu-open]");
+  let menuScrollY = null;
+  function unlockMenuScroll() {
+    if (menuScrollY === null) return;
+    const y = menuScrollY;
+    menuScrollY = null;
+    document.body.classList.remove("menu-open");
+    document.body.style.removeProperty("--menu-scroll-top");
+    window.scrollTo({ left: 0, top: y, behavior: "instant" });
+    document.documentElement.classList.remove("menu-open");
+    toggle?.setAttribute("aria-expanded", "false");
+  }
   function closeMenu() {
     if (dialog?.open) dialog.close();
+    // Restore before a menu anchor performs its native navigation.
+    unlockMenuScroll();
   }
   if (dialog && toggle) {
     toggle.addEventListener("click", () => {
+      if (dialog.open) return;
+      menuScrollY = Math.max(0, window.scrollY);
+      document.body.style.setProperty("--menu-scroll-top", -menuScrollY + "px");
+      document.documentElement.classList.add("menu-open");
+      document.body.classList.add("menu-open");
       dialog.showModal();
       toggle.setAttribute("aria-expanded", "true");
-      document.body.style.overflow = "hidden";
     });
     dialog.querySelector("[data-menu-close]").addEventListener("click", closeMenu);
     dialog.addEventListener("click", (event) => {
       if (event.target === dialog && event.clientX < dialog.getBoundingClientRect().left) closeMenu();
       if (event.target.closest("a")) closeMenu();
     });
-    dialog.addEventListener("close", () => {
-      document.body.style.overflow = "";
-      toggle.setAttribute("aria-expanded", "false");
-    });
+    dialog.addEventListener("close", unlockMenuScroll);
     window.addEventListener("pageshow", closeMenu);
   }
 
@@ -94,6 +108,7 @@
   }
   function drawStory() {
     frame = 0;
+    if (menuScrollY !== null) return;
     if (!story || !stage || media.matches) return;
     const rect = story.getBoundingClientRect();
     const distance = Math.max(1, story.offsetHeight - stage.offsetHeight);
