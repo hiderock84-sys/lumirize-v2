@@ -2967,3 +2967,288 @@ html.motion-paused {
     min-height: 44px;
   }
 }
+
+/* Service information and original company photography. */
+.language-strip {
+  padding-block: 56px;
+  background: var(--wash);
+}
+
+.language-strip-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 28px 56px;
+  align-items: center;
+}
+
+.language-strip h2 {
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  margin-bottom: 16px;
+}
+
+.language-strip p:not(.eyebrow) {
+  max-width: 660px;
+  color: var(--muted);
+}
+
+.language-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+}
+
+.language-list li {
+  border: 1px solid #b4cecc;
+  border-radius: 4px;
+  padding: 4px 12px;
+  background: var(--white);
+  color: var(--teal);
+  font-size: 0.875rem;
+}
+
+.urgent-support {
+  background: var(--deep);
+  color: var(--white);
+  padding: clamp(24px, 4vw, 44px);
+  border-radius: 6px;
+  margin-top: 44px;
+}
+
+.urgent-support .eyebrow {
+  color: #b4dcda;
+}
+
+.urgent-support h3 {
+  font-size: clamp(1.3rem, 2.5vw, 1.7rem);
+  margin-bottom: 16px;
+}
+
+.urgent-support p + p {
+  margin-top: 12px;
+}
+
+.urgent-support .text-link {
+  color: var(--white);
+  margin-top: 20px;
+}
+
+.real-photo {
+  margin: 0;
+}
+
+.real-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+.real-photo figcaption {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+}
+
+.representative-intro {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 40px;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.representative-photo {
+  margin: 0;
+}
+
+.representative-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: 50% 12%;
+  border-radius: 6px;
+}
+
+.representative-intro h2 {
+  margin-bottom: 20px;
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+}
+
+.reply-times {
+  margin: 24px 0 0;
+  padding: 16px 18px;
+  background: var(--wash);
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.reply-times > div {
+  display: grid;
+  grid-template-columns: 7em minmax(0, 1fr);
+  gap: 12px;
+}
+
+.reply-times > div + div {
+  margin-top: 8px;
+}
+
+.reply-times dt {
+  color: var(--muted);
+}
+
+.reply-times dd {
+  margin: 0;
+  font-weight: 600;
+  color: var(--teal);
+}
+
+.contact-form .reply-note {
+  font-size: 0.75rem;
+  margin-top: 8px;
+}
+
+.contact-urgent {
+  margin-top: 24px;
+  padding: 20px;
+  border-left: 3px solid var(--teal);
+  background: var(--wash);
+}
+
+.contact-urgent h3 {
+  font-size: 1rem;
+  margin-bottom: 12px;
+}
+
+.visit-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 40px;
+  margin-top: 36px;
+}
+
+.visit-intro h3 {
+  font-size: 1.3rem;
+  margin-bottom: 16px;
+}
+
+.visit-intro .text-link {
+  margin-top: 18px;
+}
+
+.visit-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+  margin-top: 40px;
+}
+
+.visit-cards article {
+  border-top: 1px solid #bbcfcf;
+  padding-top: 20px;
+}
+
+.visit-cards .number {
+  color: var(--teal);
+  font-size: 1.5rem;
+  font-family: var(--serif);
+}
+
+.visit-cards h3 {
+  font-size: 1.125rem;
+  margin: 10px 0 14px;
+}
+
+.visit-cards p,
+.visit-intro p,
+.visit-languages p {
+  color: var(--muted);
+}
+
+.visit-languages {
+  padding-top: 28px;
+  border-top: 1px solid #bbcfcf;
+  margin-top: 36px;
+}
+
+.visit-languages h3 {
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+}
+
+.privacy-lead {
+  color: var(--muted);
+  margin-top: 24px;
+}
+
+.policy-detail {
+  border-bottom: 1px solid var(--line);
+}
+
+.policy-detail:first-of-type {
+  border-top: 1px solid var(--line);
+  margin-top: 28px;
+}
+
+.policy-detail summary {
+  padding: 20px 0;
+  font-weight: 600;
+  color: var(--teal);
+  cursor: pointer;
+}
+
+.policy-detail > div {
+  padding-bottom: 24px;
+}
+
+.privacy-contact {
+  background: var(--wash);
+  padding: 24px;
+  margin-top: 32px;
+  border-radius: 6px;
+}
+
+.privacy-contact h3:first-child {
+  margin-top: 0;
+}
+
+@media (max-width: 760px) {
+  .language-strip {
+    padding-block: 36px;
+  }
+
+  .language-strip-inner,
+  .representative-intro,
+  .visit-intro,
+  .visit-cards {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+
+  .representative-photo {
+    max-width: 240px;
+  }
+
+  .representative-intro .signature {
+    margin-top: 20px;
+  }
+
+  .visit-intro {
+    margin-top: 28px;
+  }
+
+  .reply-times {
+    padding: 14px;
+  }
+
+  .reply-times > div {
+    grid-template-columns: 6em minmax(0, 1fr);
+    gap: 8px;
+  }
+}

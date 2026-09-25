@@ -122,12 +122,12 @@
           <p class="eyebrow">FOR YOU</p>
           <h2>ご相談いただける方</h2>
           <p class="lead" style="margin-top: 24px">
-            住まいの確保や生活の立て直しにお困りの方へ。ご本人だけでなく、ご家族からの相談も受け付けています。
+            ご相談の利用条件は特にありません。他の不動産会社で断られた方も、ぜひご相談ください。ご本人・ご家族・支援機関からのお問い合わせを受け付けています。
           </p>
           <ul class="target-list">
             <li>依存症からの回復途上にある方</li>
             <li>刑務所出所後の方</li>
-            <li>DV被害を受けた母子</li>
+            <li>DV被害を受けた方・お子さま</li>
             <li>LGBTQ+当事者</li>
             <li>外国人住民</li>
             <li>住まいと生活の立て直しでお困りの方</li>
@@ -149,13 +149,13 @@
           <article id="housing" class="service-row" data-reveal>
             <figure>
               <img
-                src="interior-1440.webp"
-                srcset="interior-480.webp 480w, interior-960.webp 960w, interior-1440.webp 1440w"
+                src="residence-1200.webp"
+                srcset="residence-480.webp 480w, residence-960.webp 960w, residence-1200.webp 1200w"
                 sizes="(max-width: 760px) calc(100vw - 44px), (max-width: 1000px) 80vw, 720px"
                 decoding="async"
-                alt="安心して暮らせる住まいのイメージ"
-                width="1536"
-                height="1024"
+                alt="ご案内する住まいの室内写真"
+                width="1200"
+                height="901"
                 fetchpriority="high"
               />
             </figure>
@@ -191,10 +191,13 @@
               <p>住まいの確保から、生活の立ち上げまで。制度・医療・福祉・就労など、その方に必要な支援へつなぎます。</p>
               <ul>
                 <li>住居確保給付金・住宅扶助などの制度相談</li>
-                <li>医療・福祉・就労支援との連携</li>
+                <li>医療・福祉との連携</li>
+                <li>就労支援サービス・ハローワークへの橋渡し</li>
                 <li>必要に応じた専門家への相談のご案内</li>
               </ul>
-              <p class="small" style="margin-top: 20px">利用できる制度や条件は、状況を確認したうえでご案内します。</p>
+              <p class="small" style="margin-top: 20px">
+                お仕事にお困りの場合は、住まい探しと並行して就労支援につなぎます。利用できる制度や条件は、状況を確認してご案内します。
+              </p>
             </div>
           </article>
           <article id="followup" class="service-row" data-reveal>
@@ -252,13 +255,30 @@
               </p>
             </article>
             <article class="guide-item">
-              <h3>言葉や相談方法の不安</h3>
-              <p>
-                日本語以外でのご相談、通訳・同行をご希望の場合は、必要な言語や場面をお知らせください。対応できる方法を確認してご案内します。
-              </p>
+              <h3 id="languages">対応言語・通訳・同行</h3>
+              <ul class="language-list" aria-label="常時対応する言語">
+                <li>日本語</li>
+                <li>英語</li>
+                <li>韓国語</li>
+                <li>タガログ語</li>
+                <li>タイ語</li>
+              </ul>
+              <p>上記5言語は、通訳・同行サポートが常時可能です。必要な言語や同行先をお知らせください。</p>
+              <p>その他の言語にも対応できます。まずはご相談ください。</p>
             </article>
           </div>
-          <p class="guide-hours">電話受付 10:00〜17:00　<a href="tel:0427048308">042-704-8308</a></p>
+          <aside class="urgent-support" id="temporary-stay" aria-labelledby="urgent-title">
+            <p class="eyebrow">TEMPORARY STAY</p>
+            <h3 id="urgent-title">今日、行く場所がなくてお困りの方へ。</h3>
+            <p>
+              DV被害、生活の困窮、出所後の行き場がないなどの状況に応じて、当社所有の宿泊施設に一時的に入居していただく場合があります。
+            </p>
+            <p>
+              不安な気持ち、孤独な気持ちのままで構いません。まずは電話かメールでご相談ください。即日の対応・入居は、空室や状況を確認してご案内します。
+            </p>
+            <a class="text-link" href="contact.html#phone-title">今の状況を相談する →</a>
+          </aside>
+          <p class="guide-hours">電話受付 10:00〜17:00（日曜休業）　<a href="tel:0427048308">042-704-8308</a></p>
         </div>
       </section>
       <section class="section tint" id="housing-first">
@@ -315,7 +335,7 @@
                   d="M7 3H4a1 1 0 0 0-1 1c0 9.4 7.6 17 17 17a1 1 0 0 0 1-1v-3l-5-2-2 2a15 15 0 0 1-7-7l2-2-2-5Z"
                 /></svg
               >042-704-8308</a
-            ><span class="banner-hours">電話受付 10:00〜17:00</span>
+            ><span class="banner-hours">電話受付 10:00〜17:00（日曜休業）</span>
           </div>
         </div>
       </section>
@@ -337,7 +357,7 @@
               >
               / FAX. 042-707-0392<br /><a href="mailto:info@lumirize.com">info@lumirize.com</a>
             </address>
-            <p class="footer-info">電話受付 10:00〜17:00<br />対応地域：東京都・神奈川県・千葉県</p>
+            <p class="footer-info">電話受付 10:00〜17:00（日曜休業）<br />対応地域：東京都・神奈川県・千葉県</p>
           </div>
           <nav class="footer-nav" aria-label="フッターナビゲーション">
             <a href="index.html">トップ</a><a href="support.html">支援内容</a><a href="about.html">私たちについて</a
@@ -352,7 +372,7 @@
       <a href="tel:0427048308"
         ><svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M7 3H4a1 1 0 0 0-1 1c0 9.4 7.6 17 17 17a1 1 0 0 0 1-1v-3l-5-2-2 2a15 15 0 0 1-7-7l2-2-2-5Z" /></svg
-        ><span class="dock-copy">電話で相談<small>10:00〜17:00</small></span></a
+        ><span class="dock-copy">電話で相談<small>10:00〜17:00・日曜休業</small></span></a
       ><a href="contact.html#contact-form"
         ><svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
           <rect x="3" y="5" width="18" height="14" rx="1" />
