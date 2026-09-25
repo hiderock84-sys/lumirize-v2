@@ -20,6 +20,10 @@
     />
     <meta property="og:image" content="https://lumirize-v2.vercel.app/hero.jpg" />
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:site_name" content="株式会社ルミライズ" />
+    <meta property="og:image:alt" content="住まいから再出発を支えるルミライズのイメージ" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="canonical" href="https://lumirize-v2.vercel.app/" />
     <meta property="og:url" content="https://lumirize-v2.vercel.app/" />
   </head>
@@ -62,19 +66,19 @@
           ><span class="menu-entry"><strong>トップ</strong><small>ストーリー・支援の全体像</small></span
           ><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6" /></svg></a
         ><a href="support.html"
-          ><span class="menu-entry"><strong>支援内容</strong><small>対象者・Housing First</small></span
+          ><span class="menu-entry"><strong>支援内容</strong><small>ご相談いただける方・支援の考え方</small></span
           ><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6" /></svg></a
         ><a href="about.html"
           ><span class="menu-entry"><strong>私たちについて</strong><small>社会課題・会社概要</small></span
           ><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6" /></svg></a
         ><a href="contact.html"
-          ><span class="menu-entry"><strong>ご相談・お問い合わせ</strong><small>ご相談の流れ・FAQ</small></span
+          ><span class="menu-entry"><strong>ご相談・お問い合わせ</strong><small>ご相談の流れ・よくある質問</small></span
           ><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6" /></svg
         ></a>
       </nav>
       <nav class="menu-shortcuts" aria-label="目的から探す">
-        <a href="support.html#for-you">対象者</a><a href="contact.html#flow">ご相談の流れ</a
-        ><a href="contact.html#faq">FAQ</a>
+        <a href="support.html#for-you">ご相談いただける方</a><a href="contact.html#flow">ご相談の流れ</a
+        ><a href="contact.html#faq">よくある質問</a>
       </nav>
       <a class="button" href="contact.html#contact-form"
         >無料相談 <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6" /></svg></a
@@ -98,11 +102,25 @@
               <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6" /></svg></a
             ><a href="tel:0427048308" class="button button--outline">電話で相談する</a>
           </div>
-          <p class="hero-note">相談だけでも大丈夫です。</p>
+          <p class="hero-note">初回相談無料。相談だけでも大丈夫です。</p>
+          <dl class="hero-information">
+            <div>
+              <dt>対応地域</dt>
+              <dd>東京都・神奈川県・千葉県</dd>
+            </div>
+            <div>
+              <dt>電話受付</dt>
+              <dd>10:00〜17:00</dd>
+            </div>
+          </dl>
+          <a class="small-link" href="support.html#guide">費用・ご利用について</a>
         </div>
         <figure class="hero-photo">
           <img
-            src="hero.jpg"
+            src="hero-902.webp"
+            srcset="hero-480.webp 480w, hero-902.webp 902w"
+            sizes="(max-width: 760px) 100vw, 50vw"
+            decoding="async"
             alt="朝の光が入る住まいで穏やかに過ごす人のイメージ"
             width="902"
             height="1603"
@@ -131,13 +149,33 @@
             <p class="section-kicker">ストーリー <span>STORY</span></p>
             <h2>住まいが変わると、<br />明日が変わる。</h2>
           </div>
-          <a class="story-skip" href="#our-support">支援内容へ進む ↓</a>
+          <div class="story-options">
+            <button
+              class="motion-toggle"
+              type="button"
+              data-motion-toggle
+              aria-pressed="false"
+              aria-controls="story-scenes"
+              hidden
+            >
+              <span data-motion-label>静止して読む</span></button
+            ><a class="story-skip" href="#our-support">支援内容へ進む ↓</a>
+          </div>
         </div>
       </section>
-      <section class="story" data-story aria-label="住まいから始まる再出発の物語">
+      <section class="story" id="story-scenes" data-story aria-label="住まいから始まる再出発の物語">
         <div class="story-stage">
           <article class="scene" aria-label="1 夜の路地">
-            <img src="scene1.jpg" alt="夜の路地に立つ人のイメージ" width="1024" height="1536" loading="lazy" />
+            <img
+              src="scene1-960.webp"
+              srcset="scene1-480.webp 480w, scene1-960.webp 960w"
+              sizes="(max-width: 760px) 100vw, (max-width: 1400px) 100vw, 1200px"
+              decoding="async"
+              alt="夜の路地に立つ人のイメージ"
+              width="1024"
+              height="1536"
+              loading="lazy"
+            />
             <div class="scene-text-window">
               <div class="scene-copy">
                 <p class="eyebrow">01 / 03</p>
@@ -147,7 +185,16 @@
             </div>
           </article>
           <article class="scene" aria-label="2 住まいの鍵">
-            <img src="scene2.jpg" alt="玄関先で鍵を受け取る場面のイメージ" width="1024" height="1536" loading="lazy" />
+            <img
+              src="scene2-960.webp"
+              srcset="scene2-480.webp 480w, scene2-960.webp 960w"
+              sizes="(max-width: 760px) 100vw, (max-width: 1400px) 100vw, 1200px"
+              decoding="async"
+              alt="玄関先で鍵を受け取る場面のイメージ"
+              width="1024"
+              height="1536"
+              loading="lazy"
+            />
             <div class="scene-text-window">
               <div class="scene-copy">
                 <p class="eyebrow">02 / 03</p>
@@ -157,7 +204,16 @@
             </div>
           </article>
           <article class="scene" aria-label="3 朝の光">
-            <img src="scene3.jpg" alt="朝の光が差し込む住まいでのイメージ" width="1024" height="1536" loading="lazy" />
+            <img
+              src="scene3-960.webp"
+              srcset="scene3-480.webp 480w, scene3-960.webp 960w"
+              sizes="(max-width: 760px) 100vw, (max-width: 1400px) 100vw, 1200px"
+              decoding="async"
+              alt="朝の光が差し込む住まいでのイメージ"
+              width="1024"
+              height="1536"
+              loading="lazy"
+            />
             <div class="scene-text-window">
               <div class="scene-copy">
                 <p class="eyebrow">03 / 03</p>
@@ -172,7 +228,16 @@
               ><button type="button" data-scene-go="1" aria-label="住まいの鍵の場面へ" aria-current="false"></button
               ><button type="button" data-scene-go="2" aria-label="朝の光の場面へ" aria-current="false"></button>
             </div>
-            <a class="scroll-label" href="#our-support"
+            <button
+              type="button"
+              class="motion-toggle motion-toggle--dark"
+              data-motion-toggle
+              aria-pressed="false"
+              aria-controls="story-scenes"
+              hidden
+            >
+              <span data-motion-label>静止して読む</span></button
+            ><a class="scroll-label" href="#our-support"
               >SCROLL <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18m-6-6 6 6 6-6" /></svg
             ></a>
           </div>
@@ -188,7 +253,16 @@
           <div class="support-grid">
             <a class="support-card" href="support.html#housing" data-reveal
               ><figure>
-                <img src="interior.png" alt="朝の光が入る住まいのイメージ" loading="lazy" width="1536" height="1024" />
+                <img
+                  src="interior-1440.webp"
+                  srcset="interior-480.webp 480w, interior-960.webp 960w, interior-1440.webp 1440w"
+                  sizes="(max-width: 760px) calc(100vw - 44px), (max-width: 1000px) 80vw, 720px"
+                  decoding="async"
+                  alt="朝の光が入る住まいのイメージ"
+                  loading="lazy"
+                  width="1536"
+                  height="1024"
+                />
               </figure>
               <div>
                 <span class="number">01</span>
@@ -202,7 +276,10 @@
             ><a class="support-card" href="support.html#living" data-reveal
               ><figure>
                 <img
-                  src="scene2.jpg"
+                  src="scene2-960.webp"
+                  srcset="scene2-480.webp 480w, scene2-960.webp 960w"
+                  sizes="(max-width: 760px) 100vw, (max-width: 1400px) 100vw, 1200px"
+                  decoding="async"
                   alt="住まいの鍵を受け取る場面のイメージ"
                   loading="lazy"
                   width="1024"
@@ -221,7 +298,10 @@
             ><a class="support-card" href="support.html#followup" data-reveal
               ><figure>
                 <img
-                  src="scene3.jpg"
+                  src="scene3-960.webp"
+                  srcset="scene3-480.webp 480w, scene3-960.webp 960w"
+                  sizes="(max-width: 760px) 100vw, (max-width: 1400px) 100vw, 1200px"
+                  decoding="async"
                   alt="住まいで穏やかに過ごす場面のイメージ"
                   loading="lazy"
                   width="1024"
@@ -249,7 +329,16 @@
       </section>
       <section class="philosophy-teaser" id="housing-first">
         <figure>
-          <img src="interior.png" alt="朝の光が差し込む居室のイメージ" width="1536" height="1024" loading="lazy" />
+          <img
+            src="interior-1440.webp"
+            srcset="interior-480.webp 480w, interior-960.webp 960w, interior-1440.webp 1440w"
+            sizes="(max-width: 760px) calc(100vw - 44px), (max-width: 1000px) 80vw, 720px"
+            decoding="async"
+            alt="朝の光が差し込む居室のイメージ"
+            width="1536"
+            height="1024"
+            loading="lazy"
+          />
         </figure>
         <div class="philosophy-copy" data-reveal>
           <p class="section-kicker">Housing First <span>まず、住まいから</span></p>
@@ -315,7 +404,7 @@
                   d="M7 3H4a1 1 0 0 0-1 1c0 9.4 7.6 17 17 17a1 1 0 0 0 1-1v-3l-5-2-2 2a15 15 0 0 1-7-7l2-2-2-5Z"
                 /></svg
               >042-704-8308</a
-            >
+            ><span class="banner-hours">電話受付 10:00〜17:00</span>
           </div>
         </div>
       </section>
@@ -337,11 +426,12 @@
               >
               / FAX. 042-707-0392<br /><a href="mailto:info@lumirize.com">info@lumirize.com</a>
             </address>
+            <p class="footer-info">電話受付 10:00〜17:00<br />対応地域：東京都・神奈川県・千葉県</p>
           </div>
           <nav class="footer-nav" aria-label="フッターナビゲーション">
             <a href="index.html">トップ</a><a href="support.html">支援内容</a><a href="about.html">私たちについて</a
             ><a href="contact.html">ご相談・お問い合わせ</a><a href="about.html#company">会社概要</a
-            ><a href="contact.html#faq">よくある質問</a>
+            ><a href="contact.html#faq">よくある質問</a> <a href="contact.html#privacy">個人情報の取り扱い</a>
           </nav>
         </div>
         <p class="copyright">© 2026 LUMIRIZE Inc.</p>
@@ -351,7 +441,7 @@
       <a href="tel:0427048308"
         ><svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M7 3H4a1 1 0 0 0-1 1c0 9.4 7.6 17 17 17a1 1 0 0 0 1-1v-3l-5-2-2 2a15 15 0 0 1-7-7l2-2-2-5Z" /></svg
-        >電話で相談</a
+        ><span class="dock-copy">電話で相談<small>10:00〜17:00</small></span></a
       ><a href="contact.html#contact-form"
         ><svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
           <rect x="3" y="5" width="18" height="14" rx="1" />

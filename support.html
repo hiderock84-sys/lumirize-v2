@@ -20,6 +20,10 @@
     />
     <meta property="og:image" content="https://lumirize-v2.vercel.app/hero.jpg" />
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:site_name" content="株式会社ルミライズ" />
+    <meta property="og:image:alt" content="住まいから再出発を支えるルミライズのイメージ" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="canonical" href="https://lumirize-v2.vercel.app/support.html" />
     <meta property="og:url" content="https://lumirize-v2.vercel.app/support.html" />
   </head>
@@ -62,19 +66,19 @@
           ><span class="menu-entry"><strong>トップ</strong><small>ストーリー・支援の全体像</small></span
           ><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6" /></svg></a
         ><a href="support.html" aria-current="page"
-          ><span class="menu-entry"><strong>支援内容</strong><small>対象者・Housing First</small></span
+          ><span class="menu-entry"><strong>支援内容</strong><small>ご相談いただける方・支援の考え方</small></span
           ><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6" /></svg></a
         ><a href="about.html"
           ><span class="menu-entry"><strong>私たちについて</strong><small>社会課題・会社概要</small></span
           ><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6" /></svg></a
         ><a href="contact.html"
-          ><span class="menu-entry"><strong>ご相談・お問い合わせ</strong><small>ご相談の流れ・FAQ</small></span
+          ><span class="menu-entry"><strong>ご相談・お問い合わせ</strong><small>ご相談の流れ・よくある質問</small></span
           ><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6" /></svg
         ></a>
       </nav>
       <nav class="menu-shortcuts" aria-label="目的から探す">
-        <a href="support.html#for-you">対象者</a><a href="contact.html#flow">ご相談の流れ</a
-        ><a href="contact.html#faq">FAQ</a>
+        <a href="support.html#for-you">ご相談いただける方</a><a href="contact.html#flow">ご相談の流れ</a
+        ><a href="contact.html#faq">よくある質問</a>
       </nav>
       <a class="button" href="contact.html#contact-form"
         >無料相談 <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6" /></svg></a
@@ -94,11 +98,12 @@
           <h1 class="hero-enter">住まいから、<br />暮らしを支える。</h1>
           <p class="lead hero-enter">一人ひとりの状況に合わせて、住まいと必要な支援を一緒に整えます。</p>
         </header>
+        <a class="text-link page-guide-link" href="#guide">対応地域・費用・ご利用について ↓</a>
       </div>
       <div class="wrap">
         <nav class="section-index" aria-label="このページの内容">
           <a href="#for-you"
-            ><span class="index-number" aria-hidden="true">01</span><span>対象者</span
+            ><span class="index-number" aria-hidden="true">01</span><span>ご相談いただける方</span
             ><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18m-6-6 6 6 6-6" /></svg></a
           ><a href="#services"
             ><span class="index-number" aria-hidden="true">02</span><span>支援内容</span
@@ -115,7 +120,7 @@
       <section id="for-you" class="section tint">
         <div class="wrap">
           <p class="eyebrow">FOR YOU</p>
-          <h2>対象者</h2>
+          <h2>ご相談いただける方</h2>
           <p class="lead" style="margin-top: 24px">
             住まいの確保や生活の立て直しにお困りの方へ。ご本人だけでなく、ご家族からの相談も受け付けています。
           </p>
@@ -144,7 +149,10 @@
           <article id="housing" class="service-row" data-reveal>
             <figure>
               <img
-                src="interior.png"
+                src="interior-1440.webp"
+                srcset="interior-480.webp 480w, interior-960.webp 960w, interior-1440.webp 1440w"
+                sizes="(max-width: 760px) calc(100vw - 44px), (max-width: 1000px) 80vw, 720px"
+                decoding="async"
                 alt="安心して暮らせる住まいのイメージ"
                 width="1536"
                 height="1024"
@@ -167,7 +175,10 @@
           <article id="living" class="service-row" data-reveal>
             <figure class="portrait-frame">
               <img
-                src="scene2.jpg"
+                src="scene2-960.webp"
+                srcset="scene2-480.webp 480w, scene2-960.webp 960w"
+                sizes="(max-width: 760px) calc(100vw - 44px), 570px"
+                decoding="async"
                 alt="住まいの鍵を受け取る場面のイメージ"
                 width="1024"
                 height="1536"
@@ -188,7 +199,16 @@
           </article>
           <article id="followup" class="service-row" data-reveal>
             <figure class="portrait-frame">
-              <img src="scene3.jpg" alt="新しい住まいで暮らす人のイメージ" width="1024" height="1536" loading="lazy" />
+              <img
+                src="scene3-960.webp"
+                srcset="scene3-480.webp 480w, scene3-960.webp 960w"
+                sizes="(max-width: 760px) calc(100vw - 44px), 570px"
+                decoding="async"
+                alt="新しい住まいで暮らす人のイメージ"
+                width="1024"
+                height="1536"
+                loading="lazy"
+              />
             </figure>
             <div>
               <p class="number">03</p>
@@ -203,6 +223,42 @@
               </ul>
             </div>
           </article>
+        </div>
+      </section>
+      <section class="section tint" id="guide" aria-labelledby="guide-title">
+        <div class="wrap">
+          <p class="eyebrow">SERVICE GUIDE</p>
+          <h2 id="guide-title">ご利用にあたって</h2>
+          <div class="guide-grid">
+            <article class="guide-item">
+              <h3>対応地域</h3>
+              <p class="guide-emphasis">東京都・神奈川県・千葉県</p>
+              <p>
+                ご希望の地域をお知らせください。住まいのご提案は、空室状況や生活状況、必要な支援を確認したうえでご案内します。
+              </p>
+            </article>
+            <article class="guide-item">
+              <h3>費用について</h3>
+              <p class="guide-emphasis">初回相談は無料です。</p>
+              <p>
+                その後の費用は、支援内容によって異なります。入居時の初期費用・家賃と、支援にかかる費用を分けて、相談時にご確認ください。
+              </p>
+              <a class="small-link" href="contact.html#contact-form">支援内容と費用を相談する</a>
+            </article>
+            <article class="guide-item">
+              <h3>支援の範囲</h3>
+              <p>
+                住まい探しや手続きの確認、関係機関への橋渡し、入居後のフォローを行います。制度の利用や入居の可否は、個別の条件を確認したうえでご案内します。
+              </p>
+            </article>
+            <article class="guide-item">
+              <h3>言葉や相談方法の不安</h3>
+              <p>
+                日本語以外でのご相談、通訳・同行をご希望の場合は、必要な言語や場面をお知らせください。対応できる方法を確認してご案内します。
+              </p>
+            </article>
+          </div>
+          <p class="guide-hours">電話受付 10:00〜17:00　<a href="tel:0427048308">042-704-8308</a></p>
         </div>
       </section>
       <section class="section tint" id="housing-first">
@@ -259,7 +315,7 @@
                   d="M7 3H4a1 1 0 0 0-1 1c0 9.4 7.6 17 17 17a1 1 0 0 0 1-1v-3l-5-2-2 2a15 15 0 0 1-7-7l2-2-2-5Z"
                 /></svg
               >042-704-8308</a
-            >
+            ><span class="banner-hours">電話受付 10:00〜17:00</span>
           </div>
         </div>
       </section>
@@ -281,11 +337,12 @@
               >
               / FAX. 042-707-0392<br /><a href="mailto:info@lumirize.com">info@lumirize.com</a>
             </address>
+            <p class="footer-info">電話受付 10:00〜17:00<br />対応地域：東京都・神奈川県・千葉県</p>
           </div>
           <nav class="footer-nav" aria-label="フッターナビゲーション">
             <a href="index.html">トップ</a><a href="support.html">支援内容</a><a href="about.html">私たちについて</a
             ><a href="contact.html">ご相談・お問い合わせ</a><a href="about.html#company">会社概要</a
-            ><a href="contact.html#faq">よくある質問</a>
+            ><a href="contact.html#faq">よくある質問</a> <a href="contact.html#privacy">個人情報の取り扱い</a>
           </nav>
         </div>
         <p class="copyright">© 2026 LUMIRIZE Inc.</p>
@@ -295,7 +352,7 @@
       <a href="tel:0427048308"
         ><svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M7 3H4a1 1 0 0 0-1 1c0 9.4 7.6 17 17 17a1 1 0 0 0 1-1v-3l-5-2-2 2a15 15 0 0 1-7-7l2-2-2-5Z" /></svg
-        >電話で相談</a
+        ><span class="dock-copy">電話で相談<small>10:00〜17:00</small></span></a
       ><a href="contact.html#contact-form"
         ><svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
           <rect x="3" y="5" width="18" height="14" rx="1" />
